@@ -1,0 +1,2 @@
+../bsp/Src/servo.c:10:6:Servo_Init	2
+../bsp/Src/servo.c:59:6:Servo_SetAngle	2
