@@ -32,7 +32,7 @@ int main(void)
 	GPIOLed.pGPIOx = GPIOD;
 	GPIOLed.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_12;
 	GPIOLed.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
-	GPIOLed.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_OD;
+	GPIOLed.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
 	GPIOLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
 	GPIOLed.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
 	GPIO_PeriClockControl(GPIOD, ENABLE);
@@ -48,10 +48,10 @@ int main(void)
 
     /* Loop forever */
 	while(1){
-		if(GPIO_ReadFromInputPin(GPIOBtn.pGPIOx, GPIOBtn.GPIO_PinConfig.GPIO_PinNumber) == BTN_PRESSED)
+		if(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0) == BTN_PRESSED)
 		{
 			delay();
-			GPIO_ToggleOutputPin(GPIOLed.pGPIOx, GPIOLed.GPIO_PinConfig.GPIO_PinNumber);
+			GPIO_ToggleOutputPin(GPIOD, GPIO_PIN_NO_12);
 		}
 	}
 	return 0;

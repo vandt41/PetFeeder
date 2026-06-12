@@ -18,7 +18,7 @@ void delay_ms(uint32_t ms)
 void Feeder_FeedOnce(void)
 {
 	Servo_SetAngle(90); // Open position
-	delay_ms(10);// Keep open for 500ms
+	delay_ms(50);// Keep open for 500ms
 	Servo_SetAngle(0);   // Close position
 }
 
