@@ -14,15 +14,15 @@ void Servo_Init(void)
 
 	// 2. Configure PA6 as TIM3_CH1 (AF2)
 	GPIO_Handle_t ServoPin;
-	ServoPin.pGPIOx = GPIOA;
-	ServoPin.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_6;
+	ServoPin.pGPIOx = SERVO_PORT;
+	ServoPin.GPIO_PinConfig.GPIO_PinNumber = SERVO_PIN;
 	ServoPin.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
 	ServoPin.GPIO_PinConfig.GPIO_PinAltFunMode = 2;
 	ServoPin.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
 	ServoPin.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
 	ServoPin.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
 
-	GPIO_PeriClockControl(GPIOA, ENABLE);
+	GPIO_PeriClockControl(SERVO_PORT, ENABLE);
 	GPIO_Init(&ServoPin);
 
 	// 3. Configure TIM3 for PWM

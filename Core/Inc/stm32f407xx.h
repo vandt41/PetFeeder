@@ -659,10 +659,6 @@ typedef struct
 #define USART_SR_LBD        			8
 #define USART_SR_CTS        			9
 
-#include "gpio.h"
-#include "i2c.h"
-#include "spi.h"
-#include "rcc.h"
-#include "usart.h"
+
 
 #endif /* INC_STM3F407XX_H_ */

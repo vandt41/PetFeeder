@@ -615,8 +615,9 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber,uint32_t IRQPriority)
  */
 void USART_IRQHandling(USART_Handle_t *pUSARTHandle)
 {
-
-	uint32_t temp1 , temp2, temp3;
+	uint32_t temp1 = 0;
+	uint32_t temp2 = 0;
+	uint32_t temp3 = 0;
 	uint16_t *pdata;
 
 /*************************Check for TC flag ********************************************/

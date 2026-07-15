@@ -1,0 +1,7 @@
+CMD_FEED	                        ESP32 ->	STM32	portion (uint8_t)
+CMD_FEED_COMPLETE	        STM32->	ESP32	portion
+CMD_UPDATE_WIFI	            STM32->	ESP32	none
+CMD_NTP_TIME_REQUEST	STM32->	ESP32	none
+CMD_NTP_TIME_RESPONSE	ESP32 ->	STM32	unixTime (uint32_t)
+CMD_STATUS_REQUEST  	    ESP32 ->	STM32	none
+CMD_STATUS_RESPONSE	    STM32->	ESP32	status packet (later: more status fields)

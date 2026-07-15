@@ -16,43 +16,65 @@
  ******************************************************************************
  */
 
+#include "communication.h"
+#include "ds3231.h"
 #include "stm32f407xx.h"
+#include "button.h"
+#include "led.h"
 
-#define HIGH 1
-#define BTN_PRESSED	1
-
+	volatile uint8_t button_event = 0;
+	volatile uint8_t led_state = 0;
+	volatile uint8_t led_toggle_event = 0;
+	volatile uint32_t irq_count = 0;
 void delay(void)
 {
-	for(uint32_t i = 0; i < 500000/2; i++);
+	for(uint32_t i = 0; i < 500000; i++);
 }
 int main(void)
 {
-
-	GPIO_Handle_t GPIOBtn, GPIOLed;
-	GPIOLed.pGPIOx = GPIOD;
-	GPIOLed.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_12;
-	GPIOLed.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
-	GPIOLed.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	GPIOLed.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
-	GPIOLed.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-	GPIO_PeriClockControl(GPIOD, ENABLE);
-	GPIO_Init(&GPIOLed);
-
-	GPIOBtn.pGPIOx = GPIOA;
-	GPIOBtn.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_0;
-	GPIOBtn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
-	GPIOBtn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
-	GPIOBtn.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-	GPIO_PeriClockControl(GPIOA, ENABLE);
-	GPIO_Init(&GPIOBtn);
-
-    /* Loop forever */
-	while(1){
-		if(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0) == BTN_PRESSED)
-		{
-			delay();
-			GPIO_ToggleOutputPin(GPIOD, GPIO_PIN_NO_12);
-		}
+	Led_Init();
+	UserBtn_It_Init();
+	while(1)
+	{
+	    if(button_event == 1)
+	    {
+	    	if(led_state == 1){
+	    		led_toggle_event = 0;
+	    		led_state = 0;
+	    		LED_FeedOff();
+	    		delay();
+	    	}
+	    	else
+	    	{
+	    		led_toggle_event = 1;
+	    		led_state = 1;
+	    		LED_FeedOn();
+	    		delay();
+	    	}
+	    	button_event = 0;
+	    }
+	    if(led_toggle_event == 1)
+	    {
+	    	LED_HeartbeatToggle();
+	    	delay();
+	    }
 	}
+
 	return 0;
+}
+
+void EXTI9_5_IRQHandler(void)
+{
+	// Handle the interrupt
+	button_event = 1;
+	GPIO_IRQHandling(GPIO_PIN_NO_5);
+	LED_HeartbeatToggle();
+}
+
+void EXTI0_IRQHandler(void)
+{
+	// Handle the interrupt
+    irq_count++;
+	button_event = 1;
+	GPIO_IRQHandling(GPIO_PIN_NO_0);
 }

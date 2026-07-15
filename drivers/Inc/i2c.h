@@ -9,6 +9,7 @@
 #define INC_STM32F407XX_I2C_DRIVER_H_
 
 #include <stm32f407xx.h>
+#include "rcc.h"
 
 /*
  * Configuration structure for I2Cx peripheral

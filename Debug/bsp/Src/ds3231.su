@@ -1,0 +1,14 @@
+../bsp/Src/ds3231.c:16:6:ds3231_init	8	static
+../bsp/Src/ds3231.c:30:6:ds3231_set_current_time	24	static
+../bsp/Src/ds3231.c:50:6:ds3231_set_current_date	16	static
+../bsp/Src/ds3231.c:62:6:ds3231_get_current_time	24	static
+../bsp/Src/ds3231.c:83:6:ds3231_get_current_date	16	static
+../bsp/Src/ds3231.c:92:13:ds3231_i2c_pin_config	32	static
+../bsp/Src/ds3231.c:128:13:ds3231_i2c_config	8	static
+../bsp/Src/ds3231.c:137:13:ds3231_write	32	static
+../bsp/Src/ds3231.c:147:16:ds3231_read	32	static
+../bsp/Src/ds3231.c:156:16:binary_to_bcd	24	static
+../bsp/Src/ds3231.c:172:16:bcd_to_binary	24	static
+../bsp/Src/ds3231.c:180:6:ds3231_time_valid	16	static
+../bsp/Src/ds3231.c:186:6:ds3231_clear_osf	16	static
+../bsp/Src/ds3231.c:194:6:ds3231_set_unix_time	64	static

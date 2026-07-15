@@ -1,5 +1,3 @@
 ../app/Src/feeder.c:10:6:delay_ms	24	static,ignoring_inline_asm
 ../app/Src/feeder.c:18:6:Feeder_FeedOnce	8	static
-../app/Src/feeder.c:25:6:Feeder_ButtonInit	24	static
-../app/Src/feeder.c:42:6:Feeder_Run	8	static
-../app/Src/feeder.c:51:6:EXTI0_IRQHandler	8	static
+../app/Src/feeder.c:25:6:Feeder_Run	8	static

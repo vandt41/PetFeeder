@@ -1,0 +1,3 @@
+../bsp/Src/communication.c:16:6:Communication_Init	1
+../bsp/Src/communication.c:46:6:Communication_Send	1
+../bsp/Src/communication.c:53:6:Communication_Receive	1

@@ -9,6 +9,7 @@
 #define STM32F446X_UART_DRIVER_H_
 
 #include <stm32f407xx.h>
+#include "rcc.h"
 
 
 /*
