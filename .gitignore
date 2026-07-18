@@ -1,0 +1,21 @@
+# STM32CubeIDE generated files
+.settings/
+.project
+.cproject
+.mxproject
+*.launch
+
+# Build files
+Debug/
+Release/
+*.o
+*.cyclo
+*.su
+*.elf
+*.hex
+*.bin
+
+# IDE
+.metadata/
+*.swp
+*.swo
