@@ -18,6 +18,7 @@ void Button_Init(GPIO_RegDef_t* GPIO_Port, uint8_t GPIO_PinNumber)
 	GPIO_PeriClockControl(GPIO_Port, ENABLE);
 	GPIO_Init(&GPIOBtn);
 }
+//PD5 - interrupt on falling edge
 void Button_It_Init(void)
 {
 	GPIO_Handle_t GPIOBtn;

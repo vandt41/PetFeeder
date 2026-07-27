@@ -13,23 +13,18 @@
 #include "stm32f407xx.h"
 #include "gpio.h"
 #include "usart.h"
-
-#define COM_USART1					USART1
-#define COM_USART1_GPIO_PORT		GPIOA
-#define COM_USART1_GPIO_TX_PIN		GPIO_PIN_NO_9
-#define COM_USART1_GPIO_RX_PIN		GPIO_PIN_NO_10
+extern USART_Handle_t usart2_handle;
 
 typedef uint8_t Command_t;
 enum
 {
-    CMD_FEED = 0,
+	CMD_ERROR = 0,
+    CMD_SUCCESS,
+    CMD_FEED,
     CMD_FEED_COMPLETE,
     CMD_NTP_TIME_REQUEST,
     CMD_NTP_TIME_RESPONSE,
-    CMD_STATUS_REQUEST,
-    CMD_STATUS_RESPONSE,
-    CMD_UPDATE_WIFI,
-    CMD_ERROR
+    CMD_INIT
 };
 
 typedef struct __attribute__((packed))
@@ -37,19 +32,16 @@ typedef struct __attribute__((packed))
 	Command_t command;
     uint8_t value;
 } CommandPacket_t;
-typedef struct __attribute__((packed))
-{
-	Command_t command;
-    uint32_t unixTime;
-} TimePacket_t;
-typedef struct __attribute__((packed))
-{
-    Command_t command;
-    uint8_t bleStatus;
-    uint8_t wifiStatus;
-} StatusPacket_t;
+//typedef struct __attribute__((packed))
+//{
+//	Command_t command;
+//    uint32_t unixTime;
+//} TimePacket_t;
+
 void Communication_Init(void);
 void Communication_Send(const void *buffer, uint16_t length);
 bool Communication_Receive(void *buffer, uint16_t length);
 
+void Communication_IRQHandler(void);
+void Communication_Process(void);
 #endif

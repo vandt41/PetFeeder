@@ -3,6 +3,7 @@
 
 #include "servo.h"
 #include "button.h"
+void Feeder_Init(void);//GPIOA6
 void Feeder_FeedOnce(void);
 void Feeder_Run(void);
 void delay_ms(uint32_t ms);

@@ -1,89 +1,49 @@
 #include "ble_manager.h"
-#include "preferences_manager.h"
+// #include "preferences_manager.h"
 #include "wifi_manager.h"
-#include "ntp_server.h"
-#include "usart_com.h"
+// #include "ntp_server.h"
 #include "stdint.h"
-uint8_t food_level = 0;
-bool wifi_update_requested = false;
-String ssid;
-String password;
+#include "usart_com.h"
 
-void HandleFeedEvent(uint8_t val);
-void setup()
-{
+void setup() {
     Serial.begin(115200);
-    if(WiFi_ConnectSaved())
-    {
-        Serial.println("WiFi OK");
-        obtainTime();
-    }
-    else
-    {
-        BLE_Init();
-    }
-
+    Serial.println("ESP32 Starting...");
+    
     USART_Init();
-}
-void loop()
-{
-    if(wifi_update_requested)
-    {
-        if (BLE_HasCredentials())
-        {
-            SaveCredentials(ssid, password);
-            BLE_ClearCredentialFlag();
+  
+    delay(1000);
+    while (MySerial.available())
+        MySerial.read();
+    
 
-            if(WiFi_ConnectSaved())
-            {
-                obtainTime();
-                BLE_Stop();
-                wifi_update_requested = false;
-            }
-        }
-    }
+}
+
+void loop() {
+
     CommandPacket_t pkt;
-    if(readCmdPacket(pkt)){
-        switch (pkt.command){
-            case CMD_FEED:
-                HandleFeedEvent(pkt.value);
-                sendCmdPacket(CMD_FEED_COMPLETE, pkt.value);
-                break;
-            case CMD_UPDATE_WIFI:
-                if (!wifi_update_requested)
-                {
-                    BLE_Init();
-                    wifi_update_requested = true;
-                }
-                break;
-            // send ntp time info to update stm32's rtc
-            case CMD_NTP_TIME_REQUEST:
-            {
-                time_t now;
-                time(&now);
 
-                sendTimePacket(CMD_NTP_TIME_RESPONSE, static_cast<uint32_t>(now));
+    if (readCmdPacket(pkt)) {
+        Serial.println("PACKET RECEIVED");
+        Serial.print("Command: ");
+        Serial.println((Command_t)pkt.command);  
+        Serial.print("Value: ");
+        Serial.println(pkt.value);   
+
+        // Handle based on command
+        switch(pkt.command) {
+            case CMD_SUCCESS:
+                Serial.println("Command excecuted succesfully.");
                 break;
-            }
-            case CMD_STATUS_REQUEST:
-            {
-                sendStatusPacket(BLE_IsRunning(), WiFi.status() == WL_CONNECTED);
+            case CMD_INIT:
+                // Turn on BLE and Wifi to receive credential from web app
                 break;
-            }
-            // receive food level from stm32's sensor
-            case CMD_STATUS_RESPONSE:
-                food_level = pkt.value;
+            case CMD_FEED_COMPLETE:
+                // update web app data
                 break;
-            // send error
             default:
-                Serial.println("Unknown command");
+                Serial.println("Unknown command!");
+                sendCmdPacket(CMD_ERROR, 0);
                 break;
         }
-        
     }
 }
-    void HandleFeedEvent(uint8_t val)
-    {
-    // do nothing for now
-    return;
-    }

@@ -30,6 +30,12 @@ void Feeder_Run(void)
 		feeding_triggered = 0;
 	}
 }
+
+//GPIOA6
+void Feeder_Init(void)
+{
+	Servo_Init();
+}
 /*
 void EXTI0_IRQHandler(void)
 {

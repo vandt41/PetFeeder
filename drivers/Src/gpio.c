@@ -86,7 +86,17 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 	 //enable the peripheral clock
 
 	 GPIO_PeriClockControl(pGPIOHandle->pGPIOx, ENABLE);
+		//5. configure the alt functionality
+	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN)
+	{
+		//configure the alt function registers.
+		uint8_t temp1, temp2;
 
+		temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
+		temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber  % 8;
+		pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << ( 4 * temp2 ) ); //clearing
+		pGPIOHandle->pGPIOx->AFR[temp1] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << ( 4 * temp2 ) );
+	}
 	//1 . configure the mode of gpio pin
 
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode <= GPIO_MODE_ANALOG)
@@ -147,17 +157,6 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 	pGPIOHandle->pGPIOx->OTYPER &= ~( 0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber); //clearing
 	pGPIOHandle->pGPIOx->OTYPER |= temp;
 
-	//5. configure the alt functionality
-	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN)
-	{
-		//configure the alt function registers.
-		uint8_t temp1, temp2;
-
-		temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8;
-		temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber  % 8;
-		pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << ( 4 * temp2 ) ); //clearing
-		pGPIOHandle->pGPIOx->AFR[temp1] |= (pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << ( 4 * temp2 ) );
-	}
 
 }
 

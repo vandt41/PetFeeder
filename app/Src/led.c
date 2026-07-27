@@ -19,7 +19,12 @@ static void LED_InitPin(uint8_t pin)
 
     GPIO_Init(&led);
 }
-
+/* Onboard LED Init
+ * PD12
+ * PD13
+ * PD14
+ * PD15
+ * */
 void Led_Init(void)
 {
     GPIO_PeriClockControl(LED_PORT, ENABLE);

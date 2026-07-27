@@ -21,58 +21,38 @@
 #include "stm32f407xx.h"
 #include "button.h"
 #include "led.h"
+#include "feeder.h"
 #include <stdio.h>
-	volatile uint8_t button_event = 0;
-	volatile uint8_t led_state = 0;
-	volatile uint8_t led_toggle_event = 0;
-	volatile uint32_t irq_count = 0;
+volatile uint8_t button_event = 0;
+volatile uint8_t led_state = 0;
+volatile uint8_t led_toggle_event = 0;
+volatile uint32_t irq_count = 0;
+volatile uint8_t counter = 0;
+
 void delay(void)
 {
 	for(uint32_t i = 0; i < 500000; i++);
 }
 int main(void)
 {
-	GPIO_PinConfig_t gpio_usart2_tx_conf;
-	gpio_usart2_tx_conf.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-	gpio_usart2_tx_conf.GPIO_PinAltFunMode = 7;
-	gpio_usart2_tx_conf.GPIO_PinMode = GPIO_MODE_ALTFN;
-	gpio_usart2_tx_conf.GPIO_PinNumber = GPIO_PIN_NO_2;
-	gpio_usart2_tx_conf.GPIO_PinPuPdControl = GPIO_NO_PUPD;
-	gpio_usart2_tx_conf.GPIO_PinSpeed = GPIO_SPEED_FAST;
-	GPIO_Handle_t gpio_usart2_handle;
-	gpio_usart2_handle.pGPIOx = GPIOA;
-	gpio_usart2_handle.GPIO_PinConfig = gpio_usart2_tx_conf;
-	GPIO_Init(&gpio_usart2_handle);
+    Button_It_Init();
+    Led_Init();
+    Feeder_Init();
+    Communication_Init();
 
-	USART_Config_t usart2_conf;
-	usart2_conf.USART_Baud = USART_STD_BAUD_115200;
-	usart2_conf.USART_Mode = USART_MODE_ONLY_TX;
-	usart2_conf.USART_HWFlowControl = USART_HW_FLOW_CTRL_NONE;
-	usart2_conf.USART_NoOfStopBits = USART_STOPBITS_1;
-	usart2_conf.USART_ParityControl = USART_PARITY_DISABLE;
-	usart2_conf.USART_WordLength = USART_WORDLEN_8BITS;
-	USART_Handle_t usart2_handle;
-	usart2_handle.pUSARTx = USART2;
-	usart2_handle.USART_Config = usart2_conf;
-	USART_Init(&usart2_handle);
 
-	CommandPacket_t packet;
-	packet.command = CMD_UPDATE_WIFI;
-	packet.value = 1;
-	printf("CMD = %d\n", packet.command);
-	printf("VALUE = %d\n", packet.value);
+    while(1)
+    {
+        Communication_Process();
+        if(button_event)
+        {
+            button_event = 0;
 
-	USART_SendData(&usart2_handle, (uint8_t *)&packet, sizeof(packet));
-	//Led_Init();
-	//UserBtn_It_Init();
-	while(1)
-	{
-
-	}
-
-	return 0;
+            // button processing
+        }
+    }
+    return 0;
 }
-
 void EXTI9_5_IRQHandler(void)
 {
 	// Handle the interrupt
@@ -87,4 +67,12 @@ void EXTI0_IRQHandler(void)
     irq_count++;
 	button_event = 1;
 	GPIO_IRQHandling(GPIO_PIN_NO_0);
+}
+void USART2_IRQHandler(void)
+{
+    if(USART_GetFlagStatus(USART2, USART_FLAG_RXNE))
+    {
+        Communication_IRQHandler();
+    }
+
 }

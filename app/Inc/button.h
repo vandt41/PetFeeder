@@ -15,8 +15,13 @@
 #define BUTTON_GPIO_USERBTN_PORT	GPIOA
 #define BUTTON_GPIO_USERBTN_PIN		GPIO_PIN_NO_0
 
+//GPIOA0
 void UserBtn_It_Init(void);
+
+//GPIOD5
 void Button_It_Init(void);
+
+//Manual button
 void Button_Init(GPIO_RegDef_t* GPIO_Port, uint8_t GPIO_PinNumber);
 
 #endif /* BSP_BUTTON_H_ */

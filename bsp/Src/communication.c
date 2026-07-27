@@ -5,58 +5,123 @@
  *      Author: brianmoser
  */
 #include <communication.h>
+#include <stdio.h>
+#include "feeder.h"
 
 /*
- * Note: We are using USART1 here
+ * Note: We are using USART2 here
  * GPIOA ALT FUNCTION 7
- * TX: PA9
- * RX: PA10
+ * TX: PA2
+ * RX: PA3
  * */
-static USART_Handle_t s_usart1Handle;
+USART_Handle_t usart2_handle;
+
+static CommandPacket_t rxPacket;
+static volatile bool packetReady = false;
+// TX : PA2
+// RX : PA3
 void Communication_Init(void)
 {
-    GPIO_Handle_t usartGPIO;
+    USART_PeripheralControl(USART2, DISABLE);
+    GPIO_PinConfig_t gpio_usart2_tx_conf;
+    gpio_usart2_tx_conf.GPIO_PinOPType = GPIO_OP_TYPE_PP;
+    gpio_usart2_tx_conf.GPIO_PinAltFunMode = 7;
+    gpio_usart2_tx_conf.GPIO_PinMode = GPIO_MODE_ALTFN;
+    gpio_usart2_tx_conf.GPIO_PinNumber = GPIO_PIN_NO_2;
+    gpio_usart2_tx_conf.GPIO_PinPuPdControl = GPIO_PIN_PU;
+    gpio_usart2_tx_conf.GPIO_PinSpeed = GPIO_SPEED_FAST;
+    GPIO_Handle_t gpio_usart2_tx_handle;
+    gpio_usart2_tx_handle.pGPIOx = GPIOA;
+    gpio_usart2_tx_handle.GPIO_PinConfig = gpio_usart2_tx_conf;
 
-    usartGPIO.pGPIOx = COM_USART1_GPIO_PORT;
-    usartGPIO.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
-    usartGPIO.GPIO_PinConfig.GPIO_PinAltFunMode = 7;
-    usartGPIO.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-    usartGPIO.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
-    usartGPIO.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
+    GPIO_PinConfig_t gpio_usart2_rx_conf;
+    gpio_usart2_rx_conf.GPIO_PinOPType = GPIO_OP_TYPE_PP;
+    gpio_usart2_rx_conf.GPIO_PinAltFunMode = 7;
+    gpio_usart2_rx_conf.GPIO_PinMode = GPIO_MODE_ALTFN;
+    gpio_usart2_rx_conf.GPIO_PinNumber = GPIO_PIN_NO_3;
+    gpio_usart2_rx_conf.GPIO_PinPuPdControl = GPIO_PIN_PU;
+    gpio_usart2_rx_conf.GPIO_PinSpeed = GPIO_SPEED_FAST;
+    GPIO_Handle_t gpio_usart2_rx_handle;
+    gpio_usart2_rx_handle.pGPIOx = GPIOA;
+    gpio_usart2_rx_handle.GPIO_PinConfig = gpio_usart2_rx_conf;
 
-    /* PA2 -> USART2_TX */
-    usartGPIO.GPIO_PinConfig.GPIO_PinNumber = COM_USART1_GPIO_TX_PIN;
-    GPIO_Init(&usartGPIO);
-    /* PA3 -> USART2_RX */
-    usartGPIO.GPIO_PinConfig.GPIO_PinNumber = COM_USART1_GPIO_RX_PIN;
-    GPIO_Init(&usartGPIO);
+    USART_Config_t usart2_conf;
+    usart2_conf.USART_Baud = USART_STD_BAUD_115200;
+    usart2_conf.USART_Mode = USART_MODE_TXRX;
+    usart2_conf.USART_HWFlowControl = USART_HW_FLOW_CTRL_NONE;
+    usart2_conf.USART_NoOfStopBits = USART_STOPBITS_1;
+    usart2_conf.USART_ParityControl = USART_PARITY_DISABLE;
+    usart2_conf.USART_WordLength = USART_WORDLEN_8BITS;
 
-    s_usart1Handle.pUSARTx = COM_USART1;
-    s_usart1Handle.USART_Config.USART_Baud = USART_STD_BAUD_115200;
-    s_usart1Handle.USART_Config.USART_HWFlowControl = USART_HW_FLOW_CTRL_NONE;
-    s_usart1Handle.USART_Config.USART_Mode = USART_MODE_TXRX;
-    s_usart1Handle.USART_Config.USART_NoOfStopBits = USART_STOPBITS_1;
-    s_usart1Handle.USART_Config.USART_ParityControl = USART_PARITY_DISABLE;
-    s_usart1Handle.USART_Config.USART_WordLength = USART_WORDLEN_8BITS;
+//    USART_Handle_t usart2_handle;
+    usart2_handle.pUSARTx = USART2;
+    usart2_handle.USART_Config = usart2_conf;
+    USART_Init(&usart2_handle);
+    USART_PeripheralControl(USART2, ENABLE);
 
-    USART_Init(&s_usart1Handle);
-    USART_PeripheralControl(COM_USART1, ENABLE);
+    GPIO_Init(&gpio_usart2_tx_handle);
+    GPIO_Init(&gpio_usart2_rx_handle);
 }
 
 void Communication_Send(const void *buffer, uint16_t length)
 {
 	USART_SendData(
-	        &s_usart1Handle,
+	        &usart2_handle,
 	        (uint8_t *)buffer,
 	        length);
 }
 bool Communication_Receive(void *buffer, uint16_t length)
 {
-    USART_ReceiveData(
-    		&s_usart1Handle,
-	        (uint8_t *)buffer,
-	        length);
-    return true;
+//    USART_ReceiveData(
+//    		&usart2_handle,
+//	        (uint8_t *)buffer,
+//	        length);
+	uint8_t raw[2];
+
+	USART_ReceiveData(&usart2_handle, raw, 2);
+
+	printf("RAW: %02X %02X\r\n", raw[0], raw[1]);
+	return true;
 }
 
+void Communication_IRQHandler(void)
+{
+    USART_ReceiveData(&usart2_handle,
+                      (uint8_t *)&rxPacket,
+                      sizeof(rxPacket));
 
+    packetReady = true;
+}
+void Communication_Process(void)
+{
+    if(!packetReady)
+        return;
+
+    packetReady = false;
+
+    switch(rxPacket.command)
+    {
+        case CMD_FEED:
+
+            Feeder_FeedOnce();
+
+            CommandPacket_t reply =
+            {
+                .command = CMD_FEED_COMPLETE,
+                .value = rxPacket.value
+            };
+
+            Communication_Send(&reply,sizeof(reply));
+
+            break;
+
+        case CMD_NTP_TIME_RESPONSE:
+
+            // update RTC
+
+            break;
+
+        default:
+            break;
+    }
+}
