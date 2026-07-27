@@ -1,49 +1,68 @@
 #include "ble_manager.h"
-// #include "preferences_manager.h"
+#include "preferences_manager.h"
 #include "wifi_manager.h"
 // #include "ntp_server.h"
 #include "stdint.h"
 #include "usart_com.h"
 
-void setup() {
+void setup()
+{
     Serial.begin(115200);
-    Serial.println("ESP32 Starting...");
-    
-    USART_Init();
-  
-    delay(1000);
-    while (MySerial.available())
-        MySerial.read();
-    
 
+    USART_Init();
+
+    if(WiFi_ConnectSaved())
+    {
+        Serial.println("Connected using saved credentials");
+    }
 }
 
-void loop() {
-
+void loop()
+{
+    // Receive UART commands from STM32
     CommandPacket_t pkt;
 
-    if (readCmdPacket(pkt)) {
-        Serial.println("PACKET RECEIVED");
-        Serial.print("Command: ");
-        Serial.println((Command_t)pkt.command);  
-        Serial.print("Value: ");
-        Serial.println(pkt.value);   
-
-        // Handle based on command
-        switch(pkt.command) {
-            case CMD_SUCCESS:
-                Serial.println("Command excecuted succesfully.");
-                break;
+    if(readCmdPacket(pkt))
+    {
+        switch(pkt.command)
+        {
             case CMD_INIT:
-                // Turn on BLE and Wifi to receive credential from web app
+                BLE_Init();
                 break;
+
             case CMD_FEED_COMPLETE:
-                // update web app data
                 break;
+
+            case CMD_SUCCESS:
+                break;
+
             default:
-                Serial.println("Unknown command!");
-                sendCmdPacket(CMD_ERROR, 0);
+                sendCmdPacket(CMD_ERROR,0);
                 break;
+        }
+    }
+
+    // Handle BLE credentials
+    if(BLE_HasCredentials())
+    {
+        String ssid,password;
+
+        if(BLE_GetCredentials(ssid,password))
+        {
+            SaveCredentials(ssid,password);
+
+            if(WiFi_Connect(ssid,password))
+            {
+                BLE_Stop();
+                sendCmdPacket(CMD_SUCCESS,1);
+                Serial.println("Wifi initialized with BLE provision!");
+            }
+            else
+            {
+                sendCmdPacket(CMD_ERROR,1);
+            }
+
+            BLE_ClearCredentialFlag();
         }
     }
 }

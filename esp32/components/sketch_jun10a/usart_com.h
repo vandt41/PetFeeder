@@ -25,12 +25,6 @@ typedef struct __attribute__((packed))
     uint8_t value;
 } CommandPacket_t;
 
-// typedef struct __attribute__((packed))
-// {
-//     Command_t command;
-//     uint32_t unixTime;
-// } TimePacket_t;
-
 void USART_Init();
 // void sendTimePacket(Command_t cmd, uint32_t unixTime);
 void sendCmdPacket(Command_t cmd, uint8_t value);

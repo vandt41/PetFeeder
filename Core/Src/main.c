@@ -40,7 +40,10 @@ int main(void)
     Feeder_Init();
     Communication_Init();
 
-
+    CommandPacket_t pkt;
+    pkt.command = CMD_INIT;
+    pkt.value = 1;
+    Communication_Send(&pkt, sizeof(CommandPacket_t));
     while(1)
     {
         Communication_Process();

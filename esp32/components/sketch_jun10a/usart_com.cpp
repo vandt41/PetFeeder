@@ -12,13 +12,6 @@ void USART_Init()
         MySerial.read();     // Flush RX FIFO
 }
 
-// void sendTimePacket(Command_t cmd, uint32_t unixTime)
-// {
-//     TimePacket_t tmPkt;
-//     tmPkt.unixTime = unixTime;
-//     tmPkt.command = cmd;
-//     MySerial.write((uint8_t*)&tmPkt, sizeof(tmPkt));
-// }
 void sendCmdPacket(Command_t cmd, uint8_t value)
 {
     CommandPacket_t pkt;
@@ -47,17 +40,3 @@ bool readCmdPacket(CommandPacket_t &pkt)
 
     return false;
 }
-
-
-// bool readCmdPacket(CommandPacket_t &pkt) {
-//     if (MySerial.available() >= sizeof(CommandPacket_t)) {
-//         uint8_t buffer[sizeof(CommandPacket_t)];
-//         MySerial.readBytes(buffer, sizeof(CommandPacket_t));
-        
-//         // ✅ Read byte by byte to avoid alignment issues
-//         pkt.command = (Command_t)buffer[0];
-//         pkt.value = buffer[1];
-//         return true;
-//     }
-//     return false;
-// }

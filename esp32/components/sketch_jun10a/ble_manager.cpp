@@ -19,6 +19,7 @@ class MyServerCallbacks : public BLEServerCallbacks {
   
   void onDisconnect(BLEServer* pServer) {
     Serial.println("Client disconnected!");
+    BLEDevice::startAdvertising();
   }
 };
 class SSIDCallbacks :
@@ -60,6 +61,8 @@ class PasswordCallbacks :
 
 void BLE_Init()
 {
+    if(bleRunning)
+        return;
     BLEDevice::init("PetFeeder");
     pServer = BLEDevice::createServer();
     pServer->setCallbacks(new MyServerCallbacks());
@@ -97,10 +100,21 @@ void BLE_Init()
 
 void BLE_Stop()
 {
+    if(!bleRunning)
+        return;
+
     BLEDevice::stopAdvertising();
 
-    Serial.println("BLE Stopped");
+    if(pServer)
+    {
+        pServer->disconnect(0);
+    }
+
+    BLEDevice::deinit(true);
+
     bleRunning = false;
+
+    Serial.println("BLE stopped");
 }
 
 bool BLE_HasCredentials()
@@ -120,8 +134,12 @@ bool BLE_GetCredentials(String &ssid, String &password)
     ssid = receivedSSID;
     password = receivedPassword;
 
+    receivedSSID = "";
+    receivedPassword = "";
+
     return true;
 }
-bool BLE_IsRunning(){
-    // to do
+bool BLE_IsRunning()
+{
+    return bleRunning;
 }
