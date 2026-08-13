@@ -1,5 +1,5 @@
 ../bsp/Src/communication.c:23:6:Communication_Init	64	static
 ../bsp/Src/communication.c:66:6:Communication_Send	16	static
-../bsp/Src/communication.c:73:6:Communication_Receive	24	static
-../bsp/Src/communication.c:87:6:Communication_IRQHandler	8	static
-../bsp/Src/communication.c:95:6:Communication_Process	16	static
+../bsp/Src/communication.c:71:6:Communication_Receive	16	static
+../bsp/Src/communication.c:78:6:Communication_IRQHandler	8	static
+../bsp/Src/communication.c:84:6:Communication_Process	16	static

@@ -12,7 +12,28 @@
 uint16_t AHB_PreScaler[8] = {2,4,8,16,64,128,256,512};
 uint8_t APB1_PreScaler[4] = { 2, 4 , 8, 16};
 
+uint32_t RCC_GetSystemClock(void) {
+    uint32_t sysclk = 0;
+    uint8_t clk_src = (RCC->CFGR >> 2) & 0x3;  // SWS bits (status bits)
 
+    // Note: Use SWS (status) not SW (control) for actual current clock
+    switch(clk_src) {
+        case 0:  // HSI
+            sysclk = 16000000;
+            break;
+        case 1:  // HSE
+            sysclk = 8000000;  // Make sure HSE_VALUE matches your crystal
+            break;
+        case 2:  // PLL
+            sysclk = RCC_GetPLLOutputClock();
+            break;
+        default:
+            sysclk = 16000000;
+            break;
+    }
+
+    return sysclk;
+}
 
 uint32_t RCC_GetPCLK1Value(void)
 {

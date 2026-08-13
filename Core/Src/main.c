@@ -23,52 +23,121 @@
 #include "led.h"
 #include "feeder.h"
 #include <stdio.h>
-volatile uint8_t button_event = 0;
-volatile uint8_t led_state = 0;
 volatile uint8_t led_toggle_event = 0;
-volatile uint32_t irq_count = 0;
-volatile uint8_t counter = 0;
-
+volatile uint8_t e_init = 0;
+volatile uint8_t e_feed_button_triggered = 0;
+volatile uint32_t systick_counter = 0;
 void delay(void)
 {
 	for(uint32_t i = 0; i < 500000; i++);
 }
+void delay_ms(uint32_t ms) {
+    volatile uint32_t count = (ms * 4000UL) / 4;  // Adjust for actual cycles
+    while(count--) {
+        __asm("nop");
+        __asm("nop");
+        __asm("nop");
+        __asm("nop");
+    }
+}
+
 int main(void)
 {
-    Button_It_Init();
-    Led_Init();
-    Feeder_Init();
-    Communication_Init();
+	UserBtn_It_Init();
+	Led_Init();
 
-    CommandPacket_t pkt;
-    pkt.command = CMD_INIT;
-    pkt.value = 1;
-    Communication_Send(&pkt, sizeof(CommandPacket_t));
+//	Feeder_Init();
+//	Button_It_Init();
+//	Communication_Init();
+    delay();
+//    Feeder_FeedOnce();
+
+
     while(1)
     {
-        Communication_Process();
-        if(button_event)
-        {
-            button_event = 0;
-
-            // button processing
-        }
+    	if(e_feed_button_triggered == 1)
+    	{
+			Feeder_FeedOnce();
+			printf("Feeding ...\n");
+    		LED_FeedOn();
+    		delay_ms(5000); //5secs
+			printf("Pet is Fed!\n");
+			LED_FeedOff();
+			e_feed_button_triggered = 0;
+    	}
+    	else
+    	{
+			printf("Idling ...\n");
+			delay_ms(2000);
+    	}
     }
+//    CommandPacket_t packet;
+//    while(1)
+//    {
+////        Communication_Process();
+//    	if (Communication_Receive(&packet, sizeof(packet)))
+//    	{
+//    		printf("Received:CMD = %d VALUE = %d\n", packet.command, packet.value);
+//    	    switch(packet.command)
+//    	    {
+//    	        case CMD_FEED:
+//
+//    	            Feeder_FeedOnce();
+//
+//    	            CommandPacket_t reply =
+//    	            {
+//    	                .command = CMD_FEED_COMPLETE,
+//    	                .value = packet.value
+//    	            };
+//
+//    	            Communication_Send(&reply,sizeof(reply));
+//    	            printf("replied: %02d %02d \r\n", reply.command, reply.value);
+//
+//    	            break;
+//
+//    	        case CMD_NTP_TIME_RESPONSE:
+//
+//    	            // update RTC
+//
+//    	            break;
+//
+//    	        case CMD_ERROR:
+//    	        	printf("Error receiving command\n");
+//    	        	break;
+//    	        default:
+//    	            break;
+//    	    }
+//    	}
+//        if(button_event == 1)
+//        {
+//            button_event = 0;
+//
+//            // button processing
+//        }
+//        else if(init_start == 1)
+//        {
+//			init_start = 0;
+//			//	on click
+//			CommandPacket_t pkt;
+//			pkt.command = CMD_INIT;
+//			pkt.value = 1;
+//			Communication_Send(&pkt, sizeof(CommandPacket_t));
+//        }
+//    }
+
     return 0;
 }
 void EXTI9_5_IRQHandler(void)
 {
 	// Handle the interrupt
-	button_event = 1;
+//	e_feed_button_triggered = 1;
 	GPIO_IRQHandling(GPIO_PIN_NO_5);
-	LED_HeartbeatToggle();
 }
 
 void EXTI0_IRQHandler(void)
 {
 	// Handle the interrupt
-    irq_count++;
-	button_event = 1;
+	e_feed_button_triggered = 1;
 	GPIO_IRQHandling(GPIO_PIN_NO_0);
 }
 void USART2_IRQHandler(void)
@@ -78,4 +147,7 @@ void USART2_IRQHandler(void)
         Communication_IRQHandler();
     }
 
+}
+void SysTick_Handler(void) {
+    systick_counter++;
 }

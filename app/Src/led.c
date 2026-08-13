@@ -29,41 +29,37 @@ void Led_Init(void)
 {
     GPIO_PeriClockControl(LED_PORT, ENABLE);
 
-    LED_InitPin(LED_HEARTBEAT_PIN);
-    LED_InitPin(LED_FEED_PIN);
-    LED_InitPin(LED_ERROR_PIN);
-    LED_InitPin(LED_UART_PIN);
+    LED_InitPin(GREEN_LED_PIN);
+    LED_InitPin(ORANGE_LED_PIN);
+    LED_InitPin(RED_LED_PIN);
+    LED_InitPin(BLUE_LED_PIN);
 
-    GPIO_WriteToOutputPin(LED_PORT, LED_HEARTBEAT_PIN, OFF);
-    GPIO_WriteToOutputPin(LED_PORT, LED_FEED_PIN, OFF);
-    GPIO_WriteToOutputPin(LED_PORT, LED_ERROR_PIN, OFF);
-    GPIO_WriteToOutputPin(LED_PORT, LED_UART_PIN, OFF);
+    GPIO_WriteToOutputPin(LED_PORT, GREEN_LED_PIN, OFF);
+    GPIO_WriteToOutputPin(LED_PORT, ORANGE_LED_PIN, OFF);
+    GPIO_WriteToOutputPin(LED_PORT, RED_LED_PIN, OFF);
+    GPIO_WriteToOutputPin(LED_PORT, BLUE_LED_PIN, OFF);
 }
 
 void LED_HeartbeatToggle(void)
 {
-    GPIO_ToggleOutputPin(LED_PORT, LED_HEARTBEAT_PIN);
+    GPIO_ToggleOutputPin(LED_PORT, BLUE_LED_PIN);
 }
 
-void LED_CommPulse(void)
-{
-    GPIO_ToggleOutputPin(LED_PORT, LED_UART_PIN);
-}
 void LED_FeedOn(void){
-	GPIO_WriteToOutputPin(LED_PORT, LED_FEED_PIN, ON);
+	GPIO_WriteToOutputPin(LED_PORT, GREEN_LED_PIN, ON);
 }
 void LED_FeedOff(void)
 {
-	GPIO_WriteToOutputPin(LED_PORT, LED_FEED_PIN, OFF);
+	GPIO_WriteToOutputPin(LED_PORT, GREEN_LED_PIN, OFF);
 
 }
 void LED_ErrorOn(void)
 {
-	GPIO_WriteToOutputPin(LED_PORT, LED_ERROR_PIN, ON);
+	GPIO_WriteToOutputPin(LED_PORT, RED_LED_PIN, ON);
 
 }
 void LED_ErrorOff(void)
 {
-	GPIO_WriteToOutputPin(LED_PORT, LED_ERROR_PIN, OFF);
+	GPIO_WriteToOutputPin(LED_PORT, RED_LED_PIN, OFF);
 
 }

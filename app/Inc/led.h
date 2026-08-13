@@ -17,10 +17,10 @@
 
 #define LED_PORT 	GPIOD
 
-#define LED_UART_PIN 			GPIO_PIN_NO_12
-#define LED_FEED_PIN         	GPIO_PIN_NO_13
-#define LED_ERROR_PIN        	GPIO_PIN_NO_14
-#define LED_HEARTBEAT_PIN    	GPIO_PIN_NO_15
+#define GREEN_LED_PIN 			GPIO_PIN_NO_12
+#define ORANGE_LED_PIN         	GPIO_PIN_NO_13
+#define RED_LED_PIN        		GPIO_PIN_NO_14
+#define BLUE_LED_PIN    		GPIO_PIN_NO_15
 
 void Led_Init();
 void LED_HeartbeatToggle(void);

@@ -1,3 +1,4 @@
-../drivers/Src/rcc.c:17:10:RCC_GetPCLK1Value	6
-../drivers/Src/rcc.c:81:10:RCC_GetPCLK2Value	4
-../drivers/Src/rcc.c:119:11:RCC_GetPLLOutputClock	1
+../drivers/Src/rcc.c:15:10:RCC_GetSystemClock	5
+../drivers/Src/rcc.c:38:10:RCC_GetPCLK1Value	6
+../drivers/Src/rcc.c:102:10:RCC_GetPCLK2Value	4
+../drivers/Src/rcc.c:140:11:RCC_GetPLLOutputClock	1

@@ -65,30 +65,19 @@ void Communication_Init(void)
 
 void Communication_Send(const void *buffer, uint16_t length)
 {
-	USART_SendData(
-	        &usart2_handle,
-	        (uint8_t *)buffer,
-	        length);
+	USART_SendData(&usart2_handle, (uint8_t *)buffer, length);
 }
+
 bool Communication_Receive(void *buffer, uint16_t length)
 {
-//    USART_ReceiveData(
-//    		&usart2_handle,
-//	        (uint8_t *)buffer,
-//	        length);
-	uint8_t raw[2];
+    USART_ReceiveData(&usart2_handle, (uint8_t *)buffer, length);
 
-	USART_ReceiveData(&usart2_handle, raw, 2);
-
-	printf("RAW: %02X %02X\r\n", raw[0], raw[1]);
-	return true;
+    return true;
 }
 
 void Communication_IRQHandler(void)
 {
-    USART_ReceiveData(&usart2_handle,
-                      (uint8_t *)&rxPacket,
-                      sizeof(rxPacket));
+    USART_ReceiveData(&usart2_handle, (uint8_t *)&rxPacket, sizeof(rxPacket));
 
     packetReady = true;
 }

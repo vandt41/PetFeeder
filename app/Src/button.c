@@ -39,7 +39,7 @@ void Button_It_Init(void)
 void UserBtn_It_Init(void)
 {
 	GPIO_Handle_t GPIOBtn;
-	memset(&GPIOBtn, 0, sizeof(GPIOBtn));
+//	memset(&GPIOBtn, 0, sizeof(GPIOBtn));
 	GPIOBtn.pGPIOx = BUTTON_GPIO_USERBTN_PORT;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinNumber = BUTTON_GPIO_USERBTN_PIN;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IT_RT;

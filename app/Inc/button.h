@@ -12,6 +12,7 @@
 #include "gpio.h"
 #include <string.h>
 
+//PA0
 #define BUTTON_GPIO_USERBTN_PORT	GPIOA
 #define BUTTON_GPIO_USERBTN_PIN		GPIO_PIN_NO_0
 
