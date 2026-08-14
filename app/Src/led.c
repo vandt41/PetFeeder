@@ -40,25 +40,28 @@ void Led_Init(void)
     GPIO_WriteToOutputPin(LED_PORT, BLUE_LED_PIN, OFF);
 }
 
-void LED_HeartbeatToggle(void)
+void LED_Blue_On(void)
 {
-    GPIO_ToggleOutputPin(LED_PORT, BLUE_LED_PIN);
+	GPIO_WriteToOutputPin(LED_PORT, BLUE_LED_PIN, ON);
 }
-
-void LED_FeedOn(void){
+void LED_Blue_Off(void)
+{
+	GPIO_WriteToOutputPin(LED_PORT, BLUE_LED_PIN, OFF);
+}
+void LED_Green_On(void){
 	GPIO_WriteToOutputPin(LED_PORT, GREEN_LED_PIN, ON);
 }
-void LED_FeedOff(void)
+void LED_Green_Off(void)
 {
 	GPIO_WriteToOutputPin(LED_PORT, GREEN_LED_PIN, OFF);
 
 }
-void LED_ErrorOn(void)
+void LED_Red_On(void)
 {
 	GPIO_WriteToOutputPin(LED_PORT, RED_LED_PIN, ON);
 
 }
-void LED_ErrorOff(void)
+void LED_Red_Off(void)
 {
 	GPIO_WriteToOutputPin(LED_PORT, RED_LED_PIN, OFF);
 

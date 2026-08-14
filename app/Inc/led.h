@@ -23,10 +23,11 @@
 #define BLUE_LED_PIN    		GPIO_PIN_NO_15
 
 void Led_Init();
-void LED_HeartbeatToggle(void);
-void LED_FeedOn(void);
-void LED_FeedOff(void);
-void LED_ErrorOn(void);
-void LED_ErrorOff(void);
+void LED_Blue_On(void);
+void LED_Blue_Off(void);
+void LED_Red_On(void);
+void LED_Red_Off(void);
+void LED_Green_On(void);
+void LED_Green_Off(void);
 void LED_CommPulse(void);
 #endif /* LED_H_ */

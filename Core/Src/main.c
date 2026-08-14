@@ -23,10 +23,12 @@
 #include "led.h"
 #include "feeder.h"
 #include <stdio.h>
+#include <time.h>
 volatile uint8_t led_toggle_event = 0;
 volatile uint8_t e_init = 0;
-volatile uint8_t e_feed_button_triggered = 0;
+volatile uint8_t e_user_button_pressed = 0;
 volatile uint32_t systick_counter = 0;
+volatile uint8_t e_ble_init = 0;
 void delay(void)
 {
 	for(uint32_t i = 0; i < 500000; i++);
@@ -45,25 +47,44 @@ int main(void)
 {
 	UserBtn_It_Init();
 	Led_Init();
-
-//	Feeder_Init();
-//	Button_It_Init();
-//	Communication_Init();
-    delay();
-//    Feeder_FeedOnce();
-
+	Feeder_Init();
+	Communication_Init();
+	Button_It_Init();
+	delay();
+//	Feeder_FeedOnce();
 
     while(1)
     {
-    	if(e_feed_button_triggered == 1)
+//    	static uint32_t last_feed_time = 0;
+//    	uint32_t now = millis();
+//    	if(e_feed_button_triggered == 1 && (now - last_feed_time > 2000))
+    	if(e_user_button_pressed == 1)
     	{
-			Feeder_FeedOnce();
-			printf("Feeding ...\n");
-    		LED_FeedOn();
-    		delay_ms(5000); //5secs
-			printf("Pet is Fed!\n");
-			LED_FeedOff();
-			e_feed_button_triggered = 0;
+    		e_user_button_pressed = 0;
+    		delay_ms(1000);
+//		    last_feed_time = now;
+    	    if(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0))
+    	    {
+    	    	printf("Button held for 2s!\nBegin BLE provisioning...\n");
+        		LED_Blue_On();
+        		CommandPacket_t reply =
+				{
+					.command = CMD_INIT,
+					.value = 24
+				};
+				Communication_Send(&reply,sizeof(reply));
+        		LED_Blue_Off();
+    	    	printf("BLE provisioning finished.\n");
+
+    	    }
+    	    else
+    	    {
+    			printf("Feeding ...\n");
+        		LED_Green_On();
+    			Feeder_FeedOnce();
+    			printf("Pet is Fed!\n");
+    			LED_Green_Off();
+    	    }
     	}
     	else
     	{
@@ -137,7 +158,7 @@ void EXTI9_5_IRQHandler(void)
 void EXTI0_IRQHandler(void)
 {
 	// Handle the interrupt
-	e_feed_button_triggered = 1;
+	e_user_button_pressed = 1;
 	GPIO_IRQHandling(GPIO_PIN_NO_0);
 }
 void USART2_IRQHandler(void)

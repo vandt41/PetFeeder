@@ -1,7 +1,8 @@
 ../app/Src/led.c:8:13:LED_InitPin	1
 ../app/Src/led.c:28:6:Led_Init	1
-../app/Src/led.c:43:6:LED_HeartbeatToggle	1
-../app/Src/led.c:48:6:LED_FeedOn	1
-../app/Src/led.c:51:6:LED_FeedOff	1
-../app/Src/led.c:56:6:LED_ErrorOn	1
-../app/Src/led.c:61:6:LED_ErrorOff	1
+../app/Src/led.c:43:6:LED_Blue_On	1
+../app/Src/led.c:47:6:LED_Blue_Off	1
+../app/Src/led.c:51:6:LED_Green_On	1
+../app/Src/led.c:54:6:LED_Green_Off	1
+../app/Src/led.c:59:6:LED_Red_On	1
+../app/Src/led.c:64:6:LED_Red_Off	1

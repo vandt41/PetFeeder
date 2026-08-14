@@ -55,17 +55,6 @@ void Servo_Init(void)
 	// Enable the counter
 	TIM3->CR1 |= (1 << 0);
 
-//	GPIO_Handle_t gpio;
-//
-//	gpio.pGPIOx = GPIOA;
-//	gpio.GPIO_PinConfig.GPIO_PinNumber = GPIO_PIN_NO_6;
-//	gpio.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
-//	gpio.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
-//	gpio.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
-//	gpio.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-//
-//	GPIO_PeriClockControl(GPIOA, ENABLE);
-//	GPIO_Init(&gpio);
 }
 
 void Servo_SetAngle(uint8_t angle)
