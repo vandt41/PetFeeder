@@ -10,15 +10,26 @@ extern HardwareSerial MySerial;
 
 enum Command_t : uint8_t
 {
-    CMD_ERROR = 0,
-    CMD_SUCCESS,
+	CMD_ERROR = 0,
     CMD_FEED,
     CMD_FEED_COMPLETE,
     CMD_NTP_TIME_REQUEST,
     CMD_NTP_TIME_RESPONSE,
-    CMD_INIT
+    CMD_INIT,
+    CMD_INIT_COMPLETE
 };
-
+enum Error_t : uint8_t
+{
+	ERR_FEEDER_JAM = 0,
+	ERR_FEEDER_OVERTEMP,
+	ERR_FEEDER_EMPTY,
+    ERR_TIMEOUT_WIFI,
+    ERR_TIMEOUT_BLE,
+    ERR_TIMEOUT_RTC,
+	ERR_WIFI_DISCONNECT,
+    ERR_OTA_FAIL,
+    ERR_RTC_FAIL
+};
 typedef struct __attribute__((packed))
 {
     Command_t command;

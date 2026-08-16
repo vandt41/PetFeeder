@@ -24,11 +24,13 @@
 #include "feeder.h"
 #include <stdio.h>
 #include <time.h>
+#define MAX_PORTION 10
 volatile uint8_t led_toggle_event = 0;
 volatile uint8_t e_init = 0;
 volatile uint8_t e_user_button_pressed = 0;
 volatile uint32_t systick_counter = 0;
-volatile uint8_t e_ble_init = 0;
+volatile ErrorState_t g_error = ERR_ERROR_NONE;
+
 void delay(void)
 {
 	for(uint32_t i = 0; i < 500000; i++);
@@ -51,21 +53,18 @@ int main(void)
 	Communication_Init();
 	Button_It_Init();
 	delay();
-//	Feeder_FeedOnce();
-
+	CommandPacket_t packet;
     while(1)
     {
-//    	static uint32_t last_feed_time = 0;
-//    	uint32_t now = millis();
-//    	if(e_feed_button_triggered == 1 && (now - last_feed_time > 2000))
+    	/**********************ON-BOARD BUTTON CONTROL SECTION*****************************************/
     	if(e_user_button_pressed == 1)
     	{
     		e_user_button_pressed = 0;
     		delay_ms(1000);
-//		    last_feed_time = now;
     	    if(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0))
     	    {
-    	    	printf("Button held for 2s!\nBegin BLE provisioning...\n");
+        		e_init = 1;
+    	    	printf("Button held for 1s!\nBegin BLE provisioning...\n");
         		LED_Blue_On();
         		CommandPacket_t reply =
 				{
@@ -73,87 +72,113 @@ int main(void)
 					.value = 24
 				};
 				Communication_Send(&reply,sizeof(reply));
-        		LED_Blue_Off();
-    	    	printf("BLE provisioning finished.\n");
-
+    	    	printf("BLE provisioning request sent!\n");
     	    }
     	    else
     	    {
-    			printf("Feeding ...\n");
+    			printf("Manual Feeding ...\n");
         		LED_Green_On();
     			Feeder_FeedOnce();
+    			// Handle error:
     			printf("Pet is Fed!\n");
     			LED_Green_Off();
     	    }
     	}
+
+
     	else
     	{
 			printf("Idling ...\n");
 			delay_ms(2000);
     	}
+
+    	/**********************MESSAGE EXECUTION SEECTION*****************************************/
+//		Communication_Process();
+		if (Communication_Receive(&packet, sizeof(packet)))
+		{
+			printf("Received:CMD = %d VALUE = %d\n", packet.command, packet.value);
+			switch(packet.command)
+			{
+				case CMD_FEED:
+					uint8_t portion = packet.value;
+				    if(portion > MAX_PORTION)
+				    {
+				        CommandPacket_t reply =
+				        {
+				            .command = CMD_ERROR,
+				            .value = ERR_INVALID_PORTION
+				        };
+
+				        Communication_Send(&reply, sizeof(reply));
+				        break;
+				    }
+	    			printf("Feed request received!\n");
+	        		LED_Green_On();
+	    			printf("Feeding...\n");
+	    			Feeder_Portion(portion);
+	    			printf("Pet is fed with portion level %d!\n", portion);
+	    			LED_Green_Off();
+					CommandPacket_t reply =
+					{
+						.command = CMD_FEED_COMPLETE,
+						.value = packet.value
+					};
+					Communication_Send(&reply,sizeof(reply));
+					printf("replied: %02d %02d \r\n", reply.command, reply.value);
+
+					break;
+
+				case CMD_NTP_TIME_RESPONSE:
+					// update RTC
+
+					break;
+				case CMD_INIT_COMPLETE:
+					e_init = 0;
+		    		LED_Blue_Off();
+			    	printf("BLE provisioning finished.\n");
+					break;
+
+//				case CMD_ERROR:
+//					g_error = packet.value;
+//					LED_Red_On();
+//					printf("Error received!\n");
+//					switch (g_error)
+//					{
+//						case ERR_FEEDER_JAM:
+//							Feeder_HandleJam();
+//							break;
+//						case ERR_INVALID_PORTION:
+//							CommandPacket_t reply =
+//							{
+//								.command = CMD_ERROR,
+//								.value = ERR_INVALID_PORTION
+//							};
+//						case ERR_ERROR_NONE:
+//						default:
+//							break;
+//					}
+//					if(e_error == 0)
+//					{
+//						LED_Red_Off();
+//						printf("Error resolved!\n");
+//					}
+//					break;
+				default:
+					break;
+			}
+		}
+
+
     }
-//    CommandPacket_t packet;
-//    while(1)
-//    {
-////        Communication_Process();
-//    	if (Communication_Receive(&packet, sizeof(packet)))
-//    	{
-//    		printf("Received:CMD = %d VALUE = %d\n", packet.command, packet.value);
-//    	    switch(packet.command)
-//    	    {
-//    	        case CMD_FEED:
-//
-//    	            Feeder_FeedOnce();
-//
-//    	            CommandPacket_t reply =
-//    	            {
-//    	                .command = CMD_FEED_COMPLETE,
-//    	                .value = packet.value
-//    	            };
-//
-//    	            Communication_Send(&reply,sizeof(reply));
-//    	            printf("replied: %02d %02d \r\n", reply.command, reply.value);
-//
-//    	            break;
-//
-//    	        case CMD_NTP_TIME_RESPONSE:
-//
-//    	            // update RTC
-//
-//    	            break;
-//
-//    	        case CMD_ERROR:
-//    	        	printf("Error receiving command\n");
-//    	        	break;
-//    	        default:
-//    	            break;
-//    	    }
-//    	}
-//        if(button_event == 1)
-//        {
-//            button_event = 0;
-//
-//            // button processing
-//        }
-//        else if(init_start == 1)
-//        {
-//			init_start = 0;
-//			//	on click
-//			CommandPacket_t pkt;
-//			pkt.command = CMD_INIT;
-//			pkt.value = 1;
-//			Communication_Send(&pkt, sizeof(CommandPacket_t));
-//        }
-//    }
 
     return 0;
 }
-void EXTI9_5_IRQHandler(void)
-{
-	// Handle the interrupt
-//	e_feed_button_triggered = 1;
-	GPIO_IRQHandling(GPIO_PIN_NO_5);
-}
+//void EXTI9_5_IRQHandler(void)
+//{
+//	// Handle the interrupt
+////	e_feed_button_triggered = 1;
+//	GPIO_IRQHandling(GPIO_PIN_NO_5);
+//}
 
 void EXTI0_IRQHandler(void)
 {

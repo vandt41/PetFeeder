@@ -1,3 +1,4 @@
 ../app/Src/feeder.c:11:6:Feeder_FeedOnce	8	static
-../app/Src/feeder.c:18:6:Feeder_Run	8	static
-../app/Src/feeder.c:28:6:Feeder_Init	8	static
+../app/Src/feeder.c:21:6:Feeder_Portion	16	static
+../app/Src/feeder.c:27:9:Feeder_HandleJam	16	static
+../app/Src/feeder.c:49:6:Feeder_Init	8	static

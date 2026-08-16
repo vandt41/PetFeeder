@@ -66,3 +66,7 @@ void Servo_SetAngle(uint8_t angle)
 	uint32_t pulse_width = 1000 + (angle * 1000 / 180);
 	TIM3->CCR1 = pulse_width;
 }
+uint8_t Servo_GetAngle(void)
+{
+	return ((TIM3->CCR1) / 180);
+}

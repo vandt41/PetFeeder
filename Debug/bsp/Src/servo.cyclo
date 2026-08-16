@@ -1,2 +1,3 @@
 ../bsp/Src/servo.c:10:6:Servo_Init	2
 ../bsp/Src/servo.c:60:6:Servo_SetAngle	2
+../bsp/Src/servo.c:69:9:Servo_GetAngle	1
