@@ -20,7 +20,7 @@ static CommandPacket_t rxPacket;
 static volatile bool packetReady = false;
 // TX : PA2
 // RX : PA3
-void Communication_Init(void)
+uint8_t Communication_Init(void)
 {
     USART_PeripheralControl(USART2, DISABLE);
     GPIO_PinConfig_t gpio_usart2_tx_conf;
@@ -61,6 +61,7 @@ void Communication_Init(void)
 
     GPIO_Init(&gpio_usart2_tx_handle);
     GPIO_Init(&gpio_usart2_rx_handle);
+    return 1;
 }
 
 void Communication_Send(const void *buffer, uint16_t length)

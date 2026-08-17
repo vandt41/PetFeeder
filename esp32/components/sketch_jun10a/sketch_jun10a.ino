@@ -48,6 +48,9 @@ void loop()
             case CMD_INIT:
                 BLE_Init();
                 break;
+            case CMD_DEINIT:  
+                BLE_Stop();
+                break;
 
             case CMD_FEED_COMPLETE:
                 Serial.println("Feed completed");   

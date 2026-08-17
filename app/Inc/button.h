@@ -17,7 +17,7 @@
 #define BUTTON_GPIO_USERBTN_PIN		GPIO_PIN_NO_0
 
 //GPIOA0
-void UserBtn_It_Init(void);
+uint8_t UserBtn_It_Init(void);
 
 //GPIOD5
 void Button_It_Init(void);

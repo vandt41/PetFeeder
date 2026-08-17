@@ -15,15 +15,23 @@
 #include "usart.h"
 extern USART_Handle_t usart2_handle;
 
+#define STATUS_BUTTON   (1U << 0)
+#define STATUS_LED      (1U << 1)
+#define STATUS_UART     (1U << 2)
+#define STATUS_FEEDER   (1U << 3)
+
 typedef uint8_t Command_t;
 enum
 {
 	CMD_ERROR = 0,
     CMD_FEED,
     CMD_FEED_COMPLETE,
+	CMD_STATUS_REQUEST,
+	CMD_STATUS_RESPOND,
     CMD_NTP_TIME_REQUEST,
     CMD_NTP_TIME_RESPONSE,
     CMD_INIT,
+	CMD_DEINIT,
     CMD_INIT_COMPLETE
 };
 
@@ -44,7 +52,7 @@ typedef struct __attribute__((packed))
     uint8_t value;
 } CommandPacket_t;
 
-void Communication_Init(void);
+uint8_t Communication_Init(void);
 void Communication_Send(const void *buffer, uint16_t length);
 bool Communication_Receive(void *buffer, uint16_t length);
 

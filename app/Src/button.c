@@ -36,7 +36,7 @@ void Button_It_Init(void)
 	GPIO_IRQPriorityConfig(IRQ_NO_EXTI9_5, NVIC_IRQ_PRI15);
 	GPIO_IRQInterruptConfig(IRQ_NO_EXTI9_5, ENABLE);
 }
-void UserBtn_It_Init(void)
+uint8_t UserBtn_It_Init(void)
 {
 	GPIO_Handle_t GPIOBtn;
 //	memset(&GPIOBtn, 0, sizeof(GPIOBtn));
@@ -52,5 +52,6 @@ void UserBtn_It_Init(void)
 	// IRQ configuration
 	GPIO_IRQPriorityConfig(IRQ_NO_EXTI0, NVIC_IRQ_PRI15);
 	GPIO_IRQInterruptConfig(IRQ_NO_EXTI0, ENABLE);
+	return 1;
 }
 

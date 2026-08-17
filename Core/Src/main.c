@@ -31,6 +31,12 @@ volatile uint8_t e_user_button_pressed = 0;
 volatile uint32_t systick_counter = 0;
 volatile ErrorState_t g_error = ERR_ERROR_NONE;
 
+uint8_t status = 0;
+uint8_t s_button = 0;
+uint8_t s_led = 0;
+uint8_t s_uart = 0;
+uint8_t s_feeder = 0;
+
 void delay(void)
 {
 	for(uint32_t i = 0; i < 500000; i++);
@@ -47,32 +53,51 @@ void delay_ms(uint32_t ms) {
 
 int main(void)
 {
-	UserBtn_It_Init();
-	Led_Init();
-	Feeder_Init();
-	Communication_Init();
-	Button_It_Init();
+	if(UserBtn_It_Init() == 1)s_button = 1;
+	if(Led_Init() == 1)s_led = 1;
+	if(Feeder_Init() == 1)s_feeder = 1;
+	if(Communication_Init() == 1)s_uart = 1;
+
+	//Button_It_Init();
 	delay();
 	CommandPacket_t packet;
+	CommandPacket_t reply;
     while(1)
     {
     	/**********************ON-BOARD BUTTON CONTROL SECTION*****************************************/
     	if(e_user_button_pressed == 1)
     	{
     		e_user_button_pressed = 0;
-    		delay_ms(1000);
+    		delay_ms(200);
     	    if(GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0))
     	    {
-        		e_init = 1;
-    	    	printf("Button held for 1s!\nBegin BLE provisioning...\n");
-        		LED_Blue_On();
-        		CommandPacket_t reply =
-				{
-					.command = CMD_INIT,
-					.value = 24
-				};
-				Communication_Send(&reply,sizeof(reply));
-    	    	printf("BLE provisioning request sent!\n");
+    	    	if(e_init == 1)
+    	    	{
+    	    		e_init = 0;
+    	    		printf("Button held for 1s!\nStoping BLE provisioning...\n");
+					LED_Blue_Off();
+					CommandPacket_t reply =
+					{
+						.command = CMD_DEINIT,
+						.value = 24
+					};
+					Communication_Send(&reply,sizeof(reply));
+					printf("BLE provisioning turning off request sent!\n");
+    	    	}
+    	    	else
+    	    	{
+    	    		e_init = 1;
+					printf("Button held for 1s!\nBegin BLE provisioning...\n");
+					LED_Blue_On();
+					CommandPacket_t reply =
+					{
+						.command = CMD_INIT,
+						.value = 24
+					};
+					Communication_Send(&reply,sizeof(reply));
+					printf("BLE provisioning request sent!\n");
+    	    	}
+
     	    }
     	    else
     	    {
@@ -118,11 +143,9 @@ int main(void)
 	    			Feeder_Portion(portion);
 	    			printf("Pet is fed with portion level %d!\n", portion);
 	    			LED_Green_Off();
-					CommandPacket_t reply =
-					{
-						.command = CMD_FEED_COMPLETE,
-						.value = packet.value
-					};
+					reply.command = CMD_FEED_COMPLETE;
+					reply.value = packet.value;
+
 					Communication_Send(&reply,sizeof(reply));
 					printf("replied: %02d %02d \r\n", reply.command, reply.value);
 
@@ -137,7 +160,17 @@ int main(void)
 		    		LED_Blue_Off();
 			    	printf("BLE provisioning finished.\n");
 					break;
-
+				case CMD_STATUS_REQUEST:
+					if (s_button) status |= STATUS_BUTTON;
+					if (s_led)    status |= STATUS_LED;
+					if (s_uart)   status |= STATUS_UART;
+					if (s_feeder) status |= STATUS_FEEDER;
+					CommandPacket_t reply =
+					{
+					    .command = CMD_STATUS_RESPOND,
+					    .value   = status
+					};
+					break;
 //				case CMD_ERROR:
 //					g_error = packet.value;
 //					LED_Red_On();

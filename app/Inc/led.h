@@ -22,7 +22,7 @@
 #define RED_LED_PIN        		GPIO_PIN_NO_14
 #define BLUE_LED_PIN    		GPIO_PIN_NO_15
 
-void Led_Init();
+uint8_t Led_Init();
 void LED_Blue_On(void);
 void LED_Blue_Off(void);
 void LED_Red_On(void);

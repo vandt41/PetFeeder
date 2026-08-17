@@ -10,7 +10,7 @@ volatile uint8_t feeding_triggered = 0;
 
 void Feeder_FeedOnce(void)
 {
-	Servo_SetAngle(90); // Open position
+	Servo_SetAngle(180); // Open position
 	delay_ms(500);// Keep open for 500ms
 	Servo_SetAngle(0);   // Close position
 }
@@ -46,9 +46,10 @@ uint8_t Feeder_HandleJam(void)
 }
 
 //GPIOA6
-void Feeder_Init(void)
+uint8_t Feeder_Init(void)
 {
 	Servo_Init();
+	return 1;
 }
 /*
 void EXTI0_IRQHandler(void)

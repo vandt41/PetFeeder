@@ -25,7 +25,7 @@ static void LED_InitPin(uint8_t pin)
  * PD14
  * PD15
  * */
-void Led_Init(void)
+uint8_t Led_Init(void)
 {
     GPIO_PeriClockControl(LED_PORT, ENABLE);
 
@@ -38,6 +38,7 @@ void Led_Init(void)
     GPIO_WriteToOutputPin(LED_PORT, ORANGE_LED_PIN, OFF);
     GPIO_WriteToOutputPin(LED_PORT, RED_LED_PIN, OFF);
     GPIO_WriteToOutputPin(LED_PORT, BLUE_LED_PIN, OFF);
+    return 1;
 }
 
 void LED_Blue_On(void)
