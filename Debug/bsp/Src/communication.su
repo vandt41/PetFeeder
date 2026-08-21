@@ -1,5 +1,7 @@
 ../bsp/Src/communication.c:23:9:Communication_Init	64	static
 ../bsp/Src/communication.c:67:6:Communication_Send	16	static
-../bsp/Src/communication.c:72:6:Communication_Receive	16	static
-../bsp/Src/communication.c:79:6:Communication_IRQHandler	8	static
-../bsp/Src/communication.c:85:6:Communication_Process	16	static
+../bsp/Src/communication.c:78:6:Communication_Receive	24	static
+../bsp/Src/communication.c:102:6:USART_IsRxDataAvailable	16	static
+../bsp/Src/communication.c:109:9:USART_ReadByte	16	static
+../bsp/Src/communication.c:114:6:Communication_IRQHandler	8	static
+../bsp/Src/communication.c:120:6:Communication_Process	16	static

@@ -7,8 +7,8 @@
 #define WIFI_CONNECT_TIMEOUT_MS 15000
 
 bool WiFi_Connect(const String& ssid, const String& password);
-bool WiFi_ConnectSaved();
 //If saved credentials connect succesfully, false otherwise(wrong or no ssid/password)
+bool WiFi_ConnectSaved();
 bool WiFi_IsConnected();
 
 #endif

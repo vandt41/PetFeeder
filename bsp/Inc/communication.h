@@ -15,10 +15,12 @@
 #include "usart.h"
 extern USART_Handle_t usart2_handle;
 
-#define STATUS_BUTTON   (1U << 0)
-#define STATUS_LED      (1U << 1)
-#define STATUS_UART     (1U << 2)
-#define STATUS_FEEDER   (1U << 3)
+#define STATUS_FEEDER      (1U << 0)
+#define STATUS_UART        (1U << 1)
+#define STATUS_LED         (1U << 2)
+#define STATUS_BUTTON      (1U << 3)
+#define STATUS_RTC         (1U << 4)
+#define STATUS_ERROR       (1U << 5)
 
 typedef uint8_t Command_t;
 enum
@@ -54,8 +56,12 @@ typedef struct __attribute__((packed))
 
 uint8_t Communication_Init(void);
 void Communication_Send(const void *buffer, uint16_t length);
-bool Communication_Receive(void *buffer, uint16_t length);
+//bool Communication_Receive(void *buffer, uint16_t length);
+bool Communication_Receive(CommandPacket_t *packet);
 
 void Communication_IRQHandler(void);
 void Communication_Process(void);
+
+uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle);
+bool USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle);
 #endif

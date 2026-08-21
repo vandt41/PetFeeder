@@ -31,11 +31,11 @@ volatile uint8_t e_user_button_pressed = 0;
 volatile uint32_t systick_counter = 0;
 volatile ErrorState_t g_error = ERR_ERROR_NONE;
 
-uint8_t status = 0;
 uint8_t s_button = 0;
 uint8_t s_led = 0;
 uint8_t s_uart = 0;
 uint8_t s_feeder = 0;
+uint8_t s_rtc = 0;
 
 void delay(void)
 {
@@ -62,6 +62,9 @@ int main(void)
 	delay();
 	CommandPacket_t packet;
 	CommandPacket_t reply;
+
+	Communication_Send(&reply,sizeof(reply));
+
     while(1)
     {
     	/**********************ON-BOARD BUTTON CONTROL SECTION*****************************************/
@@ -102,24 +105,15 @@ int main(void)
     	    else
     	    {
     			printf("Manual Feeding ...\n");
-        		LED_Green_On();
     			Feeder_FeedOnce();
-    			// Handle error:
     			printf("Pet is Fed!\n");
-    			LED_Green_Off();
+
     	    }
-    	}
-
-
-    	else
-    	{
-			printf("Idling ...\n");
-			delay_ms(2000);
     	}
 
     	/**********************MESSAGE EXECUTION SEECTION*****************************************/
 //		Communication_Process();
-		if (Communication_Receive(&packet, sizeof(packet)))
+		if (Communication_Receive(&packet))
 		{
 			printf("Received:CMD = %d VALUE = %d\n", packet.command, packet.value);
 			switch(packet.command)
@@ -144,7 +138,7 @@ int main(void)
 	    			printf("Pet is fed with portion level %d!\n", portion);
 	    			LED_Green_Off();
 					reply.command = CMD_FEED_COMPLETE;
-					reply.value = packet.value;
+					reply.value = portion;
 
 					Communication_Send(&reply,sizeof(reply));
 					printf("replied: %02d %02d \r\n", reply.command, reply.value);
@@ -161,16 +155,26 @@ int main(void)
 			    	printf("BLE provisioning finished.\n");
 					break;
 				case CMD_STATUS_REQUEST:
-					if (s_button) status |= STATUS_BUTTON;
-					if (s_led)    status |= STATUS_LED;
-					if (s_uart)   status |= STATUS_UART;
-					if (s_feeder) status |= STATUS_FEEDER;
-					CommandPacket_t reply =
-					{
-					    .command = CMD_STATUS_RESPOND,
-					    .value   = status
-					};
-					break;
+				{
+				    uint8_t status = 0;
+
+				    if (s_button)  	status 	|= STATUS_BUTTON;
+				    if (s_led)     	status 	|= STATUS_LED;
+				    if (s_uart)    	status 	|= STATUS_UART;
+				    if (s_feeder)  	status 	|= STATUS_FEEDER;
+				    if (s_rtc)     	status 	|= STATUS_RTC;
+				    if (g_error > 0)status 	|= STATUS_ERROR;
+
+				    CommandPacket_t reply =
+				    {
+				        .command = CMD_STATUS_RESPOND,
+				        .value   = status
+				    };
+
+				    Communication_Send(&reply, sizeof(reply));
+
+				    break;
+				}
 //				case CMD_ERROR:
 //					g_error = packet.value;
 //					LED_Red_On();
@@ -206,12 +210,6 @@ int main(void)
 
     return 0;
 }
-//void EXTI9_5_IRQHandler(void)
-//{
-//	// Handle the interrupt
-////	e_feed_button_triggered = 1;
-//	GPIO_IRQHandling(GPIO_PIN_NO_5);
-//}
 
 void EXTI0_IRQHandler(void)
 {
@@ -219,14 +217,14 @@ void EXTI0_IRQHandler(void)
 	e_user_button_pressed = 1;
 	GPIO_IRQHandling(GPIO_PIN_NO_0);
 }
-void USART2_IRQHandler(void)
-{
-    if(USART_GetFlagStatus(USART2, USART_FLAG_RXNE))
-    {
-        Communication_IRQHandler();
-    }
-
-}
-void SysTick_Handler(void) {
-    systick_counter++;
-}
+//void USART2_IRQHandler(void)
+//{
+//    if(USART_GetFlagStatus(USART2, USART_FLAG_RXNE))
+//    {
+//        Communication_IRQHandler();
+//    }
+//
+//}
+//void SysTick_Handler(void) {
+//    systick_counter++;
+//}

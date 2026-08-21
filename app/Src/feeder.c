@@ -10,9 +10,11 @@ volatile uint8_t feeding_triggered = 0;
 
 void Feeder_FeedOnce(void)
 {
+	LED_Green_On();
 	Servo_SetAngle(180); // Open position
 	delay_ms(500);// Keep open for 500ms
 	Servo_SetAngle(0);   // Close position
+	LED_Green_Off();
 }
 
 /*

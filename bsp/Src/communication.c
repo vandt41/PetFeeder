@@ -69,11 +69,46 @@ void Communication_Send(const void *buffer, uint16_t length)
 	USART_SendData(&usart2_handle, (uint8_t *)buffer, length);
 }
 
-bool Communication_Receive(void *buffer, uint16_t length)
+//bool Communication_Receive(void *buffer, uint16_t length)
+//{
+//    USART_ReceiveData(&usart2_handle, (uint8_t *)buffer, length);
+//
+//    return true;
+//}
+bool Communication_Receive(CommandPacket_t *packet)
 {
-    USART_ReceiveData(&usart2_handle, (uint8_t *)buffer, length);
+    static uint8_t rx_buffer[2];
+    static uint8_t rx_index = 0;
 
-    return true;
+    if (!USART_IsRxDataAvailable(&usart2_handle))
+    {
+        return false;
+    }
+
+    rx_buffer[rx_index++] = USART_ReadByte(&usart2_handle);
+
+    if (rx_index >= 2)
+    {
+        packet->command = rx_buffer[0];
+        packet->value   = rx_buffer[1];
+
+        rx_index = 0;
+
+        return true;
+    }
+
+    return false;
+}
+bool USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle)
+{
+    return USART_GetFlagStatus(
+        pUSARTHandle->pUSARTx,
+        USART_FLAG_RXNE
+    );
+}
+uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle)
+{
+    return (uint8_t)(pUSARTHandle->pUSARTx->DR & 0xFF);
 }
 
 void Communication_IRQHandler(void)
