@@ -1,29 +1,36 @@
 #include "wifi_manager.h"
 
 bool WiFi_Connect(const String& ssid,
-                         const String& password)
+                  const String& password)
 {
-    WiFi.mode(WIFI_STA);
-
-    WiFi.begin(ssid.c_str(),
-               password.c_str());
-
-    uint32_t startTime = millis();
-
     Serial.print("Connecting to ");
     Serial.println(ssid);
 
-    while(WiFi.status() != WL_CONNECTED)
+    // Stop any previous connection attempt
+    WiFi.disconnect(true);
+    delay(100);
+
+    // Configure station mode
+    WiFi.mode(WIFI_STA);
+    delay(100);
+
+    // Start a new connection
+    WiFi.begin(ssid.c_str(), password.c_str());
+
+    uint32_t startTime = millis();
+
+    while (WiFi.status() != WL_CONNECTED)
     {
         delay(500);
-
         Serial.print(".");
 
-        if(millis() - startTime >
-           WIFI_CONNECT_TIMEOUT_MS)
+        if (millis() - startTime >= WIFI_CONNECT_TIMEOUT_MS)
         {
             Serial.println();
             Serial.println("Connection timeout");
+
+            // Stop the failed attempt
+            WiFi.disconnect(true);
 
             return false;
         }

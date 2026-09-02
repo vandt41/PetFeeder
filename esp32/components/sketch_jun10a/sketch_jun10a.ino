@@ -24,22 +24,27 @@ const unsigned long STATUS_REFRESH_INTERVAL = 30000; // 30 seconds
 void setup()
 {
     Serial.begin(115200);
+    delay(100);
+
+    Serial.println();
+    Serial.println("ESP32 starting...");
 
     USART_Init();
 
-    if(WiFi_ConnectSaved())
+    if (WiFi_ConnectSaved())
     {
         Serial.println("Connected using saved credentials");
-        server.on("/status", HTTP_GET, handleStatus);
-        server.on("/feed", HTTP_POST, handleFeed);
+
+        openWebServer();
 
         server.begin();
 
         Serial.println("Web server started");
         Serial.println(WiFi.localIP());
-        requestSTM32Status();
+
         lastStatusRequest = millis();
     }
+
     if (WiFi_IsConnected())
     {
         Serial.println("Connected!");
@@ -50,18 +55,19 @@ void setup()
         Serial.println("Not connected");
         wifiStatus = 0;
     }
+    sendCmdPacket(CMD_STATUS_REQUEST, 0);
 }
 
 void loop()
 {
     server.handleClient();
 
-    if (millis() - lastStatusRequest >= STATUS_REFRESH_INTERVAL)
-    {
-        requestSTM32Status();
-        lastStatusRequest = millis();
-        Serial.println("Periodic status refresh requested");
-    }
+    // if (millis() - lastStatusRequest >= STATUS_REFRESH_INTERVAL)
+    // {
+    //     requestSTM32Status();
+    //     lastStatusRequest = millis();
+    //     Serial.println("Periodic status refresh requested");
+    // }
 
     CommandPacket_t pkt;
     if(readCmdPacket(pkt))
@@ -69,8 +75,10 @@ void loop()
         switch(pkt.command)
         {
             case CMD_INIT:
+                Serial.println("Enter BLE init process.\n");
                 BLE_Init();
                 break;
+
             case CMD_DEINIT:  
                 BLE_Stop();
                 break;
@@ -89,36 +97,44 @@ void loop()
                 stm32Status = pkt.value;
                 Serial.println("STM32 status updated");
                 break;
-
+                
             default:
-                sendCmdPacket(CMD_ERROR,0);
+                Serial.printf("Unknown STM32 command: 0x%02X\r\n", (uint8_t)pkt.command);
                 break;
         }
     }
 
-    // Handle BLE credentials
-    if(BLE_HasCredentials())
+if (BLE_HasCredentials())
+{
+    String ssid;
+    String password;
+
+    if (BLE_GetCredentials(ssid, password))
     {
-        String ssid,password;
+        // Consume credentials immediately
+        BLE_ClearCredentialFlag();
 
-        if(BLE_GetCredentials(ssid,password))
+        Serial.println("Credentials received");
+        Serial.println("Connecting to WiFi...");
+
+        SaveCredentials(ssid, password);
+
+        if (WiFi_Connect(ssid, password))
         {
-            SaveCredentials(ssid,password);
-
-            if(WiFi_Connect(ssid,password))
-            {
-                BLE_Stop();
-                
-            }
-            else
-            {
-                sendCmdPacket(CMD_ERROR,1);
-            }
-
-            BLE_ClearCredentialFlag();
+            sendCmdPacket(CMD_INIT_COMPLETE, 24);
+            openWebServer();
+            Serial.println("WiFi connected!");
+            BLE_Stop();
+        }
+        else
+        {
+            Serial.println("WiFi connection failed");
+            sendCmdPacket(CMD_ERROR, ERR_TIMEOUT_WIFI);
         }
     }
 }
+}
+
 void handleStatus()
 {
     server.sendHeader("Access-Control-Allow-Origin", "*");
@@ -162,7 +178,6 @@ void handleFeed()
     Serial.println("Feed request received from server");
     sendCmdPacket(CMD_FEED,1);
     Serial.println("Feed request sent to feeder");
-    requestSTM32Status();
 
     server.send(200,
                 "application/json",
@@ -172,4 +187,24 @@ void requestSTM32Status()
 {
     sendCmdPacket(CMD_STATUS_REQUEST, 0);
     // The response will be handled by the CMD_STATUS_RESPOND case in loop()
+}
+void openWebServer(void){
+    server.on("/status", HTTP_GET, handleStatus);
+    server.on("/feed", HTTP_POST, handleFeed);
+
+    server.on("/status", HTTP_OPTIONS, []()
+    {
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.sendHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+        server.sendHeader("Access-Control-Allow-Headers", "*");
+        server.send(204);
+    });
+
+    server.on("/feed", HTTP_OPTIONS, []()
+    {
+        server.sendHeader("Access-Control-Allow-Origin", "*");
+        server.sendHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+        server.sendHeader("Access-Control-Allow-Headers", "*");
+        server.send(204);
+});
 }

@@ -1,38 +1,41 @@
 #ifndef USART_COM_H
 #define USART_COM_H
 
-#include "stdint.h"
+#include <stdint.h>
 #include <Arduino.h>
-// Define TX and RX pins for USART2
+
 #define TXD2 17
 #define RXD2 16
+
 extern HardwareSerial MySerial;
 
 enum Command_t : uint8_t
 {
-	CMD_ERROR = 0,
+    CMD_ERROR = 0,
     CMD_FEED,
     CMD_FEED_COMPLETE,
-	CMD_STATUS_REQUEST,
-	CMD_STATUS_RESPOND,
+    CMD_STATUS_REQUEST,
+    CMD_STATUS_RESPOND,
     CMD_NTP_TIME_REQUEST,
     CMD_NTP_TIME_RESPONSE,
     CMD_INIT,
-	CMD_DEINIT,
+    CMD_DEINIT,
     CMD_INIT_COMPLETE
 };
+
 enum Error_t : uint8_t
 {
-	ERR_FEEDER_JAM = 0,
-	ERR_FEEDER_OVERTEMP,
-	ERR_FEEDER_EMPTY,
+    ERR_FEEDER_JAM = 0,
+    ERR_FEEDER_OVERTEMP,
+    ERR_FEEDER_EMPTY,
     ERR_TIMEOUT_WIFI,
     ERR_TIMEOUT_BLE,
     ERR_TIMEOUT_RTC,
-	ERR_WIFI_DISCONNECT,
+    ERR_WIFI_DISCONNECT,
     ERR_OTA_FAIL,
     ERR_RTC_FAIL
 };
+
 typedef struct __attribute__((packed))
 {
     Command_t command;
@@ -40,7 +43,7 @@ typedef struct __attribute__((packed))
 } CommandPacket_t;
 
 void USART_Init();
-// void sendTimePacket(Command_t cmd, uint32_t unixTime);
 void sendCmdPacket(Command_t cmd, uint8_t value);
 bool readCmdPacket(CommandPacket_t &pkt);
+
 #endif

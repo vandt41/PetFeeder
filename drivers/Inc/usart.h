@@ -11,7 +11,6 @@
 #include <stm32f407xx.h>
 #include "rcc.h"
 
-
 /*
  * Configuration structure for USARTx peripheral
  */
@@ -174,7 +173,8 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate);
 /*
  * Application Callbacks
  */
-void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t ApEv);
+
+void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t event);
 
 
 

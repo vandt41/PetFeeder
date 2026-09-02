@@ -1,42 +1,69 @@
 #include "usart_com.h"
+
 HardwareSerial MySerial(2);
 
 void USART_Init()
-{    // Initialize UART2 with pull-up enabled
-    pinMode(RXD2, INPUT_PULLUP);
+{
     MySerial.begin(115200, SERIAL_8N1, RXD2, TXD2);
-    
-    Serial.println("UART2 initialized with pull-up on RX pin 16");
-    
+
+    Serial.printf(
+        "UART2 initialized: RX=%d TX=%d baud=115200\r\n",
+        RXD2,
+        TXD2
+    );
+
+    // Flush any garbage already in RX buffer
     while (MySerial.available())
-        MySerial.read();     // Flush RX FIFO
+    {
+        MySerial.read();
+    }
 }
 
 void sendCmdPacket(Command_t cmd, uint8_t value)
 {
     CommandPacket_t pkt;
-    pkt.value = value;
+
     pkt.command = cmd;
-    Serial.printf("TX: %02X %02X\n",
-              (uint8_t)pkt.command,
-              pkt.value);
-    MySerial.write((uint8_t*)&pkt, sizeof(pkt));
+    pkt.value   = value;
+
+    Serial.printf(
+        "TX: CMD=%d VALUE=%d | RAW=%02X %02X\r\n",
+        (uint8_t)pkt.command,
+        pkt.value,
+        (uint8_t)pkt.command,
+        pkt.value
+    );
+
+    MySerial.write(
+        reinterpret_cast<uint8_t*>(&pkt),
+        sizeof(pkt)
+    );
+
+    MySerial.flush();
 }
 
 bool readCmdPacket(CommandPacket_t &pkt)
 {
-    if (MySerial.available() >= sizeof(CommandPacket_t))
+    if (MySerial.available() < sizeof(CommandPacket_t))
     {
-        uint8_t raw[2];
-
-        MySerial.readBytes(raw, 2);
-
-        Serial.printf("RAW: %02X %02X\n", raw[0], raw[1]);
-
-        memcpy(&pkt, raw, 2);
-
-        return true;
+        return false;
     }
 
-    return false;
+    uint8_t raw[sizeof(CommandPacket_t)];
+
+    raw[0] = MySerial.read();
+    raw[1] = MySerial.read();
+
+    pkt.command = static_cast<Command_t>(raw[0]);
+    pkt.value   = raw[1];
+
+    Serial.printf(
+        "RX: CMD=%d VALUE=%d | RAW=%02X %02X\r\n",
+        raw[0],
+        raw[1],
+        raw[0],
+        raw[1]
+    );
+
+    return true;
 }

@@ -13,6 +13,8 @@
 #include "stm32f407xx.h"
 #include "gpio.h"
 #include "usart.h"
+#include <stdio.h>
+
 extern USART_Handle_t usart2_handle;
 
 #define STATUS_FEEDER      (1U << 0)
@@ -59,8 +61,6 @@ void Communication_Send(const void *buffer, uint16_t length);
 //bool Communication_Receive(void *buffer, uint16_t length);
 bool Communication_Receive(CommandPacket_t *packet);
 
-void Communication_IRQHandler(void);
-void Communication_Process(void);
 
 uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle);
 bool USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle);

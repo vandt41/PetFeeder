@@ -1,7 +1,6 @@
-../bsp/Src/communication.c:23:9:Communication_Init	1
-../bsp/Src/communication.c:67:6:Communication_Send	1
-../bsp/Src/communication.c:78:6:Communication_Receive	3
-../bsp/Src/communication.c:102:6:USART_IsRxDataAvailable	1
-../bsp/Src/communication.c:109:9:USART_ReadByte	1
-../bsp/Src/communication.c:114:6:Communication_IRQHandler	1
-../bsp/Src/communication.c:120:6:Communication_Process	4
+../bsp/Src/communication.c:22:9:Communication_Init	1
+../bsp/Src/communication.c:136:6:Communication_Send	1
+../bsp/Src/communication.c:147:6:Communication_Receive	2
+../bsp/Src/communication.c:164:6:USART_IsRxDataAvailable	1
+../bsp/Src/communication.c:171:9:USART_ReadByte	1
+../bsp/Src/communication.c:176:6:USART_ApplicationEventCallback	2

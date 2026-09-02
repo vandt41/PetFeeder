@@ -28,15 +28,12 @@
 volatile uint8_t led_toggle_event = 0;
 volatile uint8_t e_init = 0;
 volatile uint8_t e_user_button_pressed = 0;
-volatile uint32_t systick_counter = 0;
 volatile ErrorState_t g_error = ERR_ERROR_NONE;
-
 uint8_t s_button = 0;
 uint8_t s_led = 0;
 uint8_t s_uart = 0;
 uint8_t s_feeder = 0;
 uint8_t s_rtc = 0;
-
 void delay(void)
 {
 	for(uint32_t i = 0; i < 500000; i++);
@@ -63,7 +60,6 @@ int main(void)
 	CommandPacket_t packet;
 	CommandPacket_t reply;
 
-	Communication_Send(&reply,sizeof(reply));
 
     while(1)
     {
@@ -98,6 +94,8 @@ int main(void)
 						.value = 24
 					};
 					Communication_Send(&reply,sizeof(reply));
+					printf("replied: %02d %02d \r\n", reply.command, reply.value);
+
 					printf("BLE provisioning request sent!\n");
     	    	}
 
@@ -129,7 +127,9 @@ int main(void)
 				        };
 
 				        Communication_Send(&reply, sizeof(reply));
-				        break;
+						printf("replied: %02d %02d \r\n", reply.command, reply.value);
+
+						break;
 				    }
 	    			printf("Feed request received!\n");
 	        		LED_Green_On();
@@ -153,6 +153,8 @@ int main(void)
 					e_init = 0;
 		    		LED_Blue_Off();
 			    	printf("BLE provisioning finished.\n");
+			    	printf("Automatically turning BLE off...\n");
+
 					break;
 				case CMD_STATUS_REQUEST:
 				{
@@ -172,6 +174,7 @@ int main(void)
 				    };
 
 				    Communication_Send(&reply, sizeof(reply));
+					printf("replied: %02d %02d \r\n", reply.command, reply.value);
 
 				    break;
 				}
@@ -217,14 +220,11 @@ void EXTI0_IRQHandler(void)
 	e_user_button_pressed = 1;
 	GPIO_IRQHandling(GPIO_PIN_NO_0);
 }
-//void USART2_IRQHandler(void)
-//{
-//    if(USART_GetFlagStatus(USART2, USART_FLAG_RXNE))
-//    {
-//        Communication_IRQHandler();
-//    }
-//
-//}
+
+void USART2_IRQHandler(void)
+{
+    USART_IRQHandling(&usart2_handle);
+}
 //void SysTick_Handler(void) {
 //    systick_counter++;
 //}

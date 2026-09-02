@@ -1,6 +1,8 @@
 
 
 #include "usart.h"
+#include <stdio.h>
+
 
 /*********************************************************************
  * @fn      		  - USART_SetBaudRate
@@ -916,7 +918,7 @@ void USART_IRQHandling(USART_Handle_t *pUSARTHandle)
  * @Note              -
 
  */
-__weak void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle,uint8_t event)
-{
 
+__weak void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t event)
+{
 }
