@@ -1,6 +1,6 @@
 ../bsp/Src/communication.c:22:9:Communication_Init	64	static
-../bsp/Src/communication.c:136:6:Communication_Send	16	static
-../bsp/Src/communication.c:147:6:Communication_Receive	16	static
-../bsp/Src/communication.c:164:6:USART_IsRxDataAvailable	16	static
-../bsp/Src/communication.c:171:9:USART_ReadByte	16	static
-../bsp/Src/communication.c:176:6:USART_ApplicationEventCallback	16	static
+../bsp/Src/communication.c:94:6:Communication_Send	16	static
+../bsp/Src/communication.c:99:6:Communication_Receive	16	static
+../bsp/Src/communication.c:116:6:USART_IsRxDataAvailable	16	static
+../bsp/Src/communication.c:123:9:USART_ReadByte	16	static
+../bsp/Src/communication.c:128:6:USART_ApplicationEventCallback	16	static

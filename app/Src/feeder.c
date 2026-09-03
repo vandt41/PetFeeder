@@ -10,11 +10,9 @@ volatile uint8_t feeding_triggered = 0;
 
 void Feeder_FeedOnce(void)
 {
-	LED_Green_On();
 	Servo_SetAngle(180); // Open position
 	delay_ms(500);// Keep open for 500ms
 	Servo_SetAngle(0);   // Close position
-	LED_Green_Off();
 }
 
 /*
@@ -26,6 +24,7 @@ void Feeder_Portion(uint8_t portion)
 	delay_ms(500 * portion);
 	Servo_SetAngle(0);   // Close position
 }
+
 uint8_t Feeder_HandleJam(void)
 {
 	uint8_t res;
@@ -53,12 +52,5 @@ uint8_t Feeder_Init(void)
 	Servo_Init();
 	return 1;
 }
-/*
-void EXTI0_IRQHandler(void)
-{
-	// Handle the interrupt
-	GPIO_IRQHandling(BUTTON_GPIO_USERBTN_PIN);
-	feeding_triggered = 1;
-}
-*/
+
 

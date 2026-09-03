@@ -25,9 +25,11 @@ enum Command_t : uint8_t
 
 enum Error_t : uint8_t
 {
-    ERR_FEEDER_JAM = 0,
+    ERR_ERROR_RESOLVE = 0,
+    ERR_FEEDER_JAM,
     ERR_FEEDER_OVERTEMP,
     ERR_FEEDER_EMPTY,
+    ERR_INVALID_PORTION,
     ERR_TIMEOUT_WIFI,
     ERR_TIMEOUT_BLE,
     ERR_TIMEOUT_RTC,

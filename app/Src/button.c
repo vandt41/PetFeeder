@@ -54,4 +54,8 @@ uint8_t UserBtn_It_Init(void)
 	GPIO_IRQInterruptConfig(IRQ_NO_EXTI0, ENABLE);
 	return 1;
 }
+uint8_t UserBtn_IsPressed(void)
+{
+	return (GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0));
+}
 

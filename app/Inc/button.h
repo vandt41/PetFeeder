@@ -18,7 +18,7 @@
 
 //GPIOA0
 uint8_t UserBtn_It_Init(void);
-
+uint8_t UserBtn_IsPressed(void);
 //GPIOD5
 void Button_It_Init(void);
 
