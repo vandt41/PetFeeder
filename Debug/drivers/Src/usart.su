@@ -11,4 +11,6 @@
 ../drivers/Src/usart.c:537:6:USART_IRQInterruptConfig	16	static
 ../drivers/Src/usart.c:592:6:USART_IRQPriorityConfig	24	static
 ../drivers/Src/usart.c:618:6:USART_IRQHandling	32	static
-../drivers/Src/usart.c:922:13:USART_ApplicationEventCallback	16	static
+../drivers/Src/usart.c:921:9:USART_IsRxDataAvailable	16	static
+../drivers/Src/usart.c:928:9:USART_ReadByte	16	static
+../drivers/Src/usart.c:932:13:USART_ApplicationEventCallback	16	static

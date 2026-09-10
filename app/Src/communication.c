@@ -113,17 +113,7 @@ bool Communication_Receive(CommandPacket_t *packet)
 
     return true;
 }
-bool USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle)
-{
-    return USART_GetFlagStatus(
-        pUSARTHandle->pUSARTx,
-        USART_FLAG_RXNE
-    );
-}
-uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle)
-{
-    return (uint8_t)(pUSARTHandle->pUSARTx->DR & 0xFF);
-}
+
 
 void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t event)
 {
@@ -132,3 +122,7 @@ void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t event)
         packet_received = 1;
     }
 }
+
+
+void USART2_IRQHandler(void)
+{ USART_IRQHandling(&usart2_handle); }

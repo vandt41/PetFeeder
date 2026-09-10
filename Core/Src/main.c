@@ -15,20 +15,19 @@
  *
  ******************************************************************************
  */
-
-#include "button.h"
+#include <stdio.h>
 #include "communication.h"
+#include "button.h"
 #include "feeder.h"
 #include "led.h"
 #include "stm32f407xx.h"
-#include <stdio.h>
+#include "system.h"
+//#include "ds3231.h"
 
 #define MAX_PORTION 10
 
-volatile uint8_t e_init                = 0;
-volatile uint8_t e_user_button_pressed = 0;
+volatile uint8_t e_init = 0;
 
-volatile ErrorState_t g_error = ERR_ERROR_RESOLVE;
 
 uint8_t s_button = 0;
 uint8_t s_led    = 0;
@@ -50,7 +49,7 @@ void delay_ms(uint32_t ms)
 
 int main(void)
 {
-  if (UserBtn_It_Init() == 1)
+  if (UserBtn_Init() == 1)
     s_button = 1;
   if (Led_Init() == 1)
     s_led = 1;
@@ -62,14 +61,12 @@ int main(void)
   // Button_It_Init();
   delay_ms(500);
   CommandPacket_t packet;
-  CommandPacket_t reply;
 
   while (1)
   {
     /**********************ON-BOARD BUTTON CONTROL SECTION*****************************************/
-    if (e_user_button_pressed == 1)
+    if (Button_GetPressedEvent() == 1)
     {
-      e_user_button_pressed = 0;
       if (UserBtn_IsPressed())
       {
         delay_ms(1000);
@@ -132,8 +129,7 @@ int main(void)
           Feeder_Portion(portion);
           printf("Pet is fed with portion level %d!\n", portion);
           LED_Green_Off();
-          reply.command = CMD_FEED_COMPLETE;
-          reply.value   = portion;
+          CommandPacket_t reply = {.command = CMD_FEED_COMPLETE, .value = portion};
 
           Communication_Send(&reply, sizeof(reply));
           printf("replied: %02d %02d \r\n", reply.command, reply.value);
@@ -170,7 +166,7 @@ int main(void)
           status |= STATUS_FEEDER;
         if (s_rtc)
           status |= STATUS_RTC;
-        if (g_error > 0)
+        if (System_HasError() >= 1)
           status |= STATUS_ERROR;
 
         CommandPacket_t reply = {.command = CMD_STATUS_RESPOND,
@@ -183,33 +179,8 @@ int main(void)
       }
 
        case CMD_ERROR:
-       {
-    	   switch(packet.value)
-    	   {
-    	   	   case ERR_TIMEOUT_WIFI:
-    	   	   case ERR_TIMEOUT_BLE:
-    	   	   {
-    	   		   g_error = ERR_ERROR_RESOLVE;
-    	            printf("Turning off BLE\n");
-    	            LED_Blue_Off();
-    	            break;
-    	   	   }
-    	   	   case ERR_FEEDER_JAM:
-    	   		Feeder_HandleJam();
-    	   		g_error = ERR_ERROR_RESOLVE;
-
-    	   		break;
-    	   	   default:
-					printf("Unknown error.\n");
-					break;
-    	   }
-    	   if(g_error == ERR_ERROR_RESOLVE)
-    	   {
-	            LED_Red_Off();
-	            printf("Error Resolved!\n");
-    	   }
-       }
-
+    	   Error_Handle(packet.value);
+    	   break;
        default:
     	   break;
       }
@@ -219,15 +190,3 @@ int main(void)
   return 0;
 }
 
-void EXTI0_IRQHandler(void)
-{
-  // Handle the interrupt
-  e_user_button_pressed = 1;
-  GPIO_IRQHandling(GPIO_PIN_NO_0);
-}
-
-void USART2_IRQHandler(void)
-{ USART_IRQHandling(&usart2_handle); }
-// void SysTick_Handler(void) {
-//     systick_counter++;
-// }

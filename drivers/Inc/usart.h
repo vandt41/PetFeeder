@@ -169,6 +169,8 @@ void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint16_t StatusFlagName);
 void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate);
 
+uint8_t USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle);
+uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle);
 
 /*
  * Application Callbacks

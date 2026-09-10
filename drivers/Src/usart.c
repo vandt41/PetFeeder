@@ -918,7 +918,17 @@ void USART_IRQHandling(USART_Handle_t *pUSARTHandle)
  * @Note              -
 
  */
-
+uint8_t USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle)
+{
+    return USART_GetFlagStatus(
+        pUSARTHandle->pUSARTx,
+        USART_FLAG_RXNE
+    );
+}
+uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle)
+{
+    return (uint8_t)(pUSARTHandle->pUSARTx->DR & 0xFF);
+}
 __weak void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t event)
 {
 }

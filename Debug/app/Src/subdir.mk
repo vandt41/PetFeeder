@@ -6,18 +6,24 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../app/Src/button.c \
+../app/Src/communication.c \
 ../app/Src/feeder.c \
-../app/Src/led.c 
+../app/Src/led.c \
+../app/Src/system.c 
 
 OBJS += \
 ./app/Src/button.o \
+./app/Src/communication.o \
 ./app/Src/feeder.o \
-./app/Src/led.o 
+./app/Src/led.o \
+./app/Src/system.o 
 
 C_DEPS += \
 ./app/Src/button.d \
+./app/Src/communication.d \
 ./app/Src/feeder.d \
-./app/Src/led.d 
+./app/Src/led.d \
+./app/Src/system.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -27,7 +33,7 @@ app/Src/%.o app/Src/%.su app/Src/%.cyclo: ../app/Src/%.c app/Src/subdir.mk
 clean: clean-app-2f-Src
 
 clean-app-2f-Src:
-	-$(RM) ./app/Src/button.cyclo ./app/Src/button.d ./app/Src/button.o ./app/Src/button.su ./app/Src/feeder.cyclo ./app/Src/feeder.d ./app/Src/feeder.o ./app/Src/feeder.su ./app/Src/led.cyclo ./app/Src/led.d ./app/Src/led.o ./app/Src/led.su
+	-$(RM) ./app/Src/button.cyclo ./app/Src/button.d ./app/Src/button.o ./app/Src/button.su ./app/Src/communication.cyclo ./app/Src/communication.d ./app/Src/communication.o ./app/Src/communication.su ./app/Src/feeder.cyclo ./app/Src/feeder.d ./app/Src/feeder.o ./app/Src/feeder.su ./app/Src/led.cyclo ./app/Src/led.d ./app/Src/led.o ./app/Src/led.su ./app/Src/system.cyclo ./app/Src/system.d ./app/Src/system.o ./app/Src/system.su
 
 .PHONY: clean-app-2f-Src
 

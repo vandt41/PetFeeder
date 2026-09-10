@@ -37,20 +37,6 @@ enum
   CMD_INIT_COMPLETE
 };
 
-typedef enum
-{
-	ERR_ERROR_RESOLVE = 0,
-    ERR_FEEDER_JAM,
-    ERR_FEEDER_OVERTEMP,
-    ERR_FEEDER_EMPTY,
-	ERR_INVALID_PORTION,
-    ERR_TIMEOUT_WIFI,
-    ERR_TIMEOUT_BLE,
-    ERR_TIMEOUT_RTC,
-    ERR_WIFI_DISCONNECT,
-    ERR_OTA_FAIL,
-    ERR_RTC_FAIL
-} ErrorState_t;
 
 typedef struct __attribute__((packed))
 {
@@ -62,6 +48,4 @@ uint8_t Communication_Init(void);
 void    Communication_Send(const void *buffer, uint16_t length);
 bool    Communication_Receive(CommandPacket_t *packet);
 
-uint8_t USART_ReadByte(USART_Handle_t *pUSARTHandle);
-bool    USART_IsRxDataAvailable(USART_Handle_t *pUSARTHandle);
 #endif

@@ -17,12 +17,15 @@
 #define BUTTON_GPIO_USERBTN_PIN		GPIO_PIN_NO_0
 
 //GPIOA0
-uint8_t UserBtn_It_Init(void);
+uint8_t UserBtn_Init(void);
 uint8_t UserBtn_IsPressed(void);
-//GPIOD5
-void Button_It_Init(void);
+uint8_t Button_GetPressedEvent(void);
 
-//Manual button
+//GPIOD5
+void ExtBtn_Init(void);
+uint8_t ExtBtn_IsPressed(void);
+
+//Generic button init
 void Button_Init(GPIO_RegDef_t* GPIO_Port, uint8_t GPIO_PinNumber);
 
 #endif /* BSP_BUTTON_H_ */
