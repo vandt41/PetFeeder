@@ -9,16 +9,13 @@ static uint8_t rx_buffer[2];
 static volatile uint8_t packet_received = 0;
 
 USART_Handle_t usart2_handle;
+
 /*
  * Note: We are using USART2 here
  * GPIOA ALT FUNCTION 7
  * TX: PA2
  * RX: PA3
  * */
-
-// TX : PA2
-// RX : PA3
-
 uint8_t Communication_Init(void)
 {
     USART_PeripheralControl(USART2, DISABLE);
@@ -125,4 +122,6 @@ void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t event)
 
 
 void USART2_IRQHandler(void)
-{ USART_IRQHandling(&usart2_handle); }
+{
+	USART_IRQHandling(&usart2_handle);
+}

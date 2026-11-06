@@ -9,6 +9,7 @@ C_SRCS += \
 ../app/Src/communication.c \
 ../app/Src/feeder.c \
 ../app/Src/led.c \
+../app/Src/schedule.c \
 ../app/Src/system.c 
 
 OBJS += \
@@ -16,6 +17,7 @@ OBJS += \
 ./app/Src/communication.o \
 ./app/Src/feeder.o \
 ./app/Src/led.o \
+./app/Src/schedule.o \
 ./app/Src/system.o 
 
 C_DEPS += \
@@ -23,6 +25,7 @@ C_DEPS += \
 ./app/Src/communication.d \
 ./app/Src/feeder.d \
 ./app/Src/led.d \
+./app/Src/schedule.d \
 ./app/Src/system.d 
 
 
@@ -33,7 +36,7 @@ app/Src/%.o app/Src/%.su app/Src/%.cyclo: ../app/Src/%.c app/Src/subdir.mk
 clean: clean-app-2f-Src
 
 clean-app-2f-Src:
-	-$(RM) ./app/Src/button.cyclo ./app/Src/button.d ./app/Src/button.o ./app/Src/button.su ./app/Src/communication.cyclo ./app/Src/communication.d ./app/Src/communication.o ./app/Src/communication.su ./app/Src/feeder.cyclo ./app/Src/feeder.d ./app/Src/feeder.o ./app/Src/feeder.su ./app/Src/led.cyclo ./app/Src/led.d ./app/Src/led.o ./app/Src/led.su ./app/Src/system.cyclo ./app/Src/system.d ./app/Src/system.o ./app/Src/system.su
+	-$(RM) ./app/Src/button.cyclo ./app/Src/button.d ./app/Src/button.o ./app/Src/button.su ./app/Src/communication.cyclo ./app/Src/communication.d ./app/Src/communication.o ./app/Src/communication.su ./app/Src/feeder.cyclo ./app/Src/feeder.d ./app/Src/feeder.o ./app/Src/feeder.su ./app/Src/led.cyclo ./app/Src/led.d ./app/Src/led.o ./app/Src/led.su ./app/Src/schedule.cyclo ./app/Src/schedule.d ./app/Src/schedule.o ./app/Src/schedule.su ./app/Src/system.cyclo ./app/Src/system.d ./app/Src/system.o ./app/Src/system.su
 
 .PHONY: clean-app-2f-Src
 

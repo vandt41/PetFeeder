@@ -27,7 +27,6 @@ static void LED_InitPin(uint8_t pin)
  * */
 uint8_t Led_Init(void)
 {
-    GPIO_PeriClockControl(LED_PORT, ENABLE);
 
     LED_InitPin(GREEN_LED_PIN);
     LED_InitPin(ORANGE_LED_PIN);

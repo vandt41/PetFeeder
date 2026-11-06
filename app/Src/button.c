@@ -15,7 +15,6 @@ void Button_Init(GPIO_RegDef_t* GPIO_Port, uint8_t GPIO_PinNumber)
 	GPIOBtn.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-	GPIO_PeriClockControl(GPIO_Port, ENABLE);
 	GPIO_Init(&GPIOBtn);
 }
 //PD5 - interrupt on falling edge
@@ -29,7 +28,6 @@ void ExtBtn_Init(void)
 	GPIOBtn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PIN_PU;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-	GPIO_PeriClockControl(GPIOD, ENABLE);
 	GPIO_Init(&GPIOBtn);
 
 	// IRQ configuration
@@ -51,7 +49,6 @@ uint8_t UserBtn_Init(void)
 	GPIOBtn.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinOPType = GPIO_OP_TYPE_PP;
 	GPIOBtn.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
-	GPIO_PeriClockControl(BUTTON_GPIO_USERBTN_PORT, ENABLE);
 	GPIO_Init(&GPIOBtn);
 
 	// IRQ configuration
@@ -65,7 +62,6 @@ uint8_t UserBtn_IsPressed(void)
 }
 
 static volatile uint8_t e_user_button_pressed = 0;
-
 uint8_t Button_GetPressedEvent(void)
 {
     uint8_t event = e_user_button_pressed;
@@ -73,6 +69,7 @@ uint8_t Button_GetPressedEvent(void)
 
     return event;
 }
+
 void EXTI0_IRQHandler(void)
 {
   // Handle the interrupt

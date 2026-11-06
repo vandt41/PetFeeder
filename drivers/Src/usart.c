@@ -316,7 +316,7 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 		{
 			//if 9BIT load the DR with 2bytes masking  the bits other than first 9 bits
 			pdata = (uint16_t*) pTxBuffer;
-			pUSARTHandle->pUSARTx->DR = (*pdata & (uint16_t)0x01FF);
+			pUSARTHandle->pUSARTx->DR = (*pdata & (uint16_t)	0x01FF);
 
 			//check for USART_ParityControl
 			if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE)

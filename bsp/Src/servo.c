@@ -22,7 +22,6 @@ void Servo_Init(void)
 	ServoPin.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_NO_PUPD;
 	ServoPin.GPIO_PinConfig.GPIO_PinSpeed = GPIO_SPEED_FAST;
 
-	GPIO_PeriClockControl(SERVO_PORT, ENABLE);
 	GPIO_Init(&ServoPin);
 
 	// 3. Configure TIM3 for PWM

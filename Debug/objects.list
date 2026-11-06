@@ -6,6 +6,7 @@
 "./app/Src/communication.o"
 "./app/Src/feeder.o"
 "./app/Src/led.o"
+"./app/Src/schedule.o"
 "./app/Src/system.o"
 "./bsp/Src/ds3231.o"
 "./bsp/Src/lcd.o"
